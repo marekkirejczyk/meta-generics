@@ -1,0 +1,49 @@
+@interface Getter {} 
+@interface Setter {}
+@interface Accessors {}
+
+class Adress {
+  String street;
+  int houseNo;
+}
+
+class PersonStub 
+{
+  @Getter
+  @Setter
+  int x;
+
+  @Accessors
+  int y;
+
+  @Getter
+  String name;
+
+  @Setter
+  Adress adress;
+  
+  static public void main(){
+	  Person person = new Person();
+	  person.setY(7);
+	  System.out.println(person.getY());
+	  
+  }
+}
+
+meta class AddAccessors<C> {
+	  meta {
+	    for (metagenerics.ast.Node e: C.getChildren())
+	      evaluate(e);
+
+	    for (metagenerics.ast.member.Field m: C.getFields())
+	      if (m.hasAnnotation("Getter") || m.hasAnnotation("Accessors"))
+	    	evaluate("%1$s get%2$s() {return %3$s;}", m.getType(), util.StringUtils.capitalize(m.getName()), m.getName());
+
+	    for (metagenerics.ast.member.Field m: C.getFields())
+	      if (m.hasAnnotation("Setter") || m.hasAnnotation("Accessors"))
+	    	evaluate("void set%2$s(%1$s arg) {%3$s = arg;}", m.getType(), util.StringUtils.capitalize(m.getName()), m.getName());
+	  }
+}
+
+
+public class Person = AddAccessors<PersonStub>
