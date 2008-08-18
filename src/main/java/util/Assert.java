@@ -1,13 +1,13 @@
 package util;
 
 @SuppressWarnings("serial")
-class CheckFailed extends RuntimeException {
+class AssertionFailed extends RuntimeException {
 
 }
 
 public class Assert {
 	static public void assertTrue(boolean cond) {
 		if (!cond)
-			throw new CheckFailed();
+			throw new AssertionFailed();
 	}
 }

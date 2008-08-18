@@ -3,13 +3,14 @@ package metagenerics;
 import java.io.IOException;
 import java.util.List;
 
-import metagenerics.ast.unit.Unit;
+import metagenerics.ast.unit.UnitAst;
 import metagenerics.transform.parse.MetaJavaLexer;
 import metagenerics.transform.parse.MetaJavaParser;
 
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.RecognitionException;
 import org.junit.Assert;
+import org.junit.Test;
 
 import util.CommonTokenListComparator;
 
@@ -41,9 +42,16 @@ public class TestHelper {
 		}
 	}
 
+
+	
 	public static <T> T firstASTInFile(Class<T> t, String x) throws IOException, RecognitionException {
 		MetaJavaParser parser = new MetaJavaParser();
-		Unit unitAST = parser.parse(x);
+		UnitAst unitAST = parser.parse(x);
 		return (T)unitAST.getElements().getElements().get(0);
+	}
+	
+	@Test
+	public void test() {
+		
 	}
 }

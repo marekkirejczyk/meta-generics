@@ -35,4 +35,20 @@ public class CollectionUtils {
 		result.append(end);
 		return result.toString();
 	}
+	
+	public static <T> void removeLast(List<T> list) {
+		list.remove(list.get(list.size()-1));
+	}
+	
+	public static <T> void removeFirst(List<T> list) {
+		list.remove(list.get(0));
+	}
+	
+	public static <T> List<T> createList(T [] array) {
+		List<T> result = new ArrayList<T>();
+		for (T elem: array)
+			result.add(elem);
+		return result;
+	}
+	 
 }

@@ -5,8 +5,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.rmi.UnexpectedException;
 
-import trash.FileTransform;
-
 
 public class SourcesWalker {
 	Sources sources;
@@ -32,10 +30,11 @@ public class SourcesWalker {
 	}
 
 	public void walk(File file, String base) throws IOException {
-		if (file.isFile())
-			transform.compile(file, new File(base));
-		else if (file.isDirectory())
-			for (File currentFile : file.listFiles(filter))
+		if (file.isFile()) {
+			if (filter.accept(file.getParentFile(), file.getName()))
+				transform.compile(file, new File(base));
+		} else if (file.isDirectory())
+			for (File currentFile : file.listFiles())
 				walk(currentFile, base + currentFile.getName() + File.separator);
 		else
 			throw new UnexpectedException("File is not dir or file");
@@ -85,12 +84,7 @@ public class SourcesWalker {
 	}
 
 	public void setFilter(final FilenameFilter filter) {
-		this.filter = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return dir.isDirectory() || filter.accept(dir, name);
-			}
-		};
+		this.filter = filter;
 	}
 
 }

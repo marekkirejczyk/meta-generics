@@ -1,19 +1,18 @@
 package metagenerics.ast;
 
+import metagenerics.exception.NotImplementedException;
 import metagenerics.symbol.Symbol;
 import metagenerics.symbol.SymbolTable;
 
 import org.antlr.runtime.Token;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-public class Node implements Symbol, Visitable {
+public class Node implements Visitable {
 
 	protected Token start, stop;
 
 	private String text;
 
-	private SymbolTable symbolTable;
+	private Symbol symbol;
 	
 	public Node() {
 	}
@@ -50,12 +49,12 @@ public class Node implements Symbol, Visitable {
 		throw new NotImplementedException();
 	}
 
-	public SymbolTable getSymbolTable() {
-		return symbolTable;
+	public SymbolTable getSymbol() {
+		return symbol;
 	}
 
-	public void setSymbolTable(SymbolTable symbolTable) {
-		this.symbolTable = symbolTable;
+	public void setSymbol(Symbol symbol) {
+		this.symbol = symbol;
 	}
 
 	

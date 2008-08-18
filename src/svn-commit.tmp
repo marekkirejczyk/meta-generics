@@ -1,0 +1,28 @@
+
+--Ta linia i następne zostaną zignorowane--
+
+M    main/java/trash/ParseTransformBase.java
+D    main/java/trash/symbol
+M    main/java/metagenerics/visitors/SymbolTableBuilder.java
+M    main/java/metagenerics/visitors/TypedefBuilder.java
+M    main/java/metagenerics/visitors/MetaGenericBuilder.java
+M    main/java/metagenerics/symbol/Symbol.java
+M    main/java/metagenerics/symbol/SymbolTable.java
+M    main/java/metagenerics/ast/unit/PackageDeclaration.java
+M    main/java/metagenerics/ast/Visitor.java
+M    main/java/metagenerics/ast/Node.java
+M    main/java/metagenerics/ast/declarations/Elements.java
+M    main/java/metagenerics/ast/common/Modifiers.java
+M    main/java/metagenerics/io/SourcesWalker.java
+M    main/java/metagenerics/walkers/ParseWalker.java
+M    main/java/metagenerics/walkers/SourceListWalker.java
+M    main/java/metagenerics/transform/metageneric/MetaGenericTransform.java
+M    main/java/metagenerics/transform/metageneric/MetaGenericCompiler.java
+M    main/java/metagenerics/transform/metatypedef/TypedefTransform.java
+M    main/java/metagenerics/transform/parse/MetaJavaParser.java
+M    main/java/metagenerics/transform/parse/MetaJavaLexer.java
+M    main/java/metagenerics/transform/parse/PrettyPrinter.java
+M    main/java/util/Assert.java
+M    main/java/util/FolderComparator.java
+M    main/java/util/CollectionUtils.java
+M    main/java/util/FolderUtils.java

@@ -4,19 +4,21 @@ import java.io.IOException;
 
 import metagenerics.ast.Node;
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
-import metagenerics.ast.declarations.MockElement;
 import metagenerics.ast.member.Block;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
 import metagenerics.ast.member.VariableBuilder;
-import metagenerics.ast.metageneric.MetaGeneric;
-import metagenerics.ast.metageneric.Typedef;
-import metagenerics.ast.unit.Unit;
+import metagenerics.ast.metageneric.MetaGenericAst;
+import metagenerics.ast.metageneric.MetaTypedefAst;
+import metagenerics.ast.unit.ImportAst;
+import metagenerics.ast.unit.PackageDeclaration;
+import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
 import util.StringUtils;
 
@@ -47,12 +49,27 @@ public class PrettyPrinter implements Visitor {
 		this.appendable = appendable;
 	}
 
-	public void visit(Unit unit) {
+	public void visit(UnitAst unit) {
 		append(unit.getAnnotations().getText() + "\n");
-		append(unit.getPackageDeclaration().getText() + "\n");
-		append(unit.getImports().getText());
+		unit.getPackageDeclaration().accept(this);
+		for (ImportAst anImport : unit.getImports())
+			anImport.accept(this);
 		for (Element element : unit.getElements().getElements())
 			element.accept(this);
+	}
+
+	public void visit(PackageDeclaration packageAst) {
+		append(packageAst.getText() + "\n");
+	}
+
+	public void visit(ImportAst importAst) {
+		append("import ");
+		if (importAst.isStatic())
+			append(" static ");
+		append(StringUtils.formatCollection(importAst.getIdentifiers(), "."));
+		if (importAst.isGeneral())
+			append(".*");
+		append(";\n");
 	}
 
 	public void visit(ClassDeclaration klass) {
@@ -90,7 +107,7 @@ public class PrettyPrinter implements Visitor {
 		append(klass.getText() + " ");
 	}
 
-	public void visit(MetaGeneric klass) {
+	public void visit(MetaGenericAst klass) {
 		if (klass.getTextAfterTransformation() != null) {
 			append(klass.getTextAfterTransformation());
 			return;
@@ -116,27 +133,22 @@ public class PrettyPrinter implements Visitor {
 
 	}
 
-	public void visit(Typedef element) {
+	public void visit(MetaTypedefAst element) {
 		append(element.getText() + " ");
 	}
 
 	public void visit(VariableBuilder vb) {
 		append(vb.getText());
 		/*
-		append(vb.getAnnotations().getText() + "\n");
-		append(vb.getModifiers().getText() + " ");
-		append(vb.getType() + " ");
-
-		boolean first = true;
-
-		for (Field f : vb.getFields()) {
-			if (first)
-				first = false;
-			else
-				append(", ");
-			append(f.getName());
-		}
-		append(";");*/
+		 * append(vb.getAnnotations().getText() + "\n");
+		 * append(vb.getModifiers().getText() + " "); append(vb.getType() + "
+		 * ");
+		 * 
+		 * boolean first = true;
+		 * 
+		 * for (Field f : vb.getFields()) { if (first) first = false; else
+		 * append(", "); append(f.getName()); } append(";");
+		 */
 	}
 
 	public void visit(Field field) {
@@ -157,8 +169,8 @@ public class PrettyPrinter implements Visitor {
 		append(mock.getText());
 	}
 
-	public void visit(MockElement mock) {
-		append(mock.getText());
+	public void visit(Semicolon semicolonAst) {
+		append(";");
 	}
 
 }

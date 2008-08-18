@@ -8,10 +8,14 @@ import java.io.IOException;
 
 import metagenerics.TestHelper;
 import metagenerics.ast.declarations.ClassDeclaration;
-import metagenerics.ast.metageneric.MetaGeneric;
-import metagenerics.ast.metageneric.Typedef;
-import metagenerics.ast.unit.Unit;
+import metagenerics.ast.metageneric.MetaGenericAst;
+import metagenerics.ast.metageneric.MetaTypedefAst;
+import metagenerics.ast.unit.UnitAst;
+import metagenerics.symbol.PackageSymbol;
 import metagenerics.symbol.SymbolTable;
+import metagenerics.symbol.type.ClassSymbol;
+import metagenerics.symbol.type.MetaGenericSymbol;
+import metagenerics.symbol.type.MetaTypeDefSymbol;
 import metagenerics.transform.metageneric.MetaGenericCompiler;
 import metagenerics.transform.metageneric.MetaGenericTransform;
 import metagenerics.transform.metatypedef.TypedefTransform;
@@ -52,8 +56,8 @@ public class TransformationTest {
 			RecognitionException {
 		StringBuilder result = new StringBuilder();
 		MetaJavaParser parser = new MetaJavaParser();
-		Unit unitAST = parser.parse(GENERIC_IN_FILE_NAME);
-		MetaGeneric metaGeneric = (MetaGeneric) unitAST.getElements()
+		UnitAst unitAST = parser.parse(GENERIC_IN_FILE_NAME);
+		MetaGenericAst metaGeneric = (MetaGenericAst) unitAST.getElements()
 				.getElements().get(0);
 		MetaGenericTransform t = new MetaGenericTransform();
 		t.transform(metaGeneric, result);
@@ -62,12 +66,12 @@ public class TransformationTest {
 				.toString());
 	}
 
-	public metagenerics.MetaGeneric firstMetaGenericInFile(String filename)
+	public metagenerics.runtime.MetaGeneric firstMetaGenericInFile(String filename)
 			throws IOException, ClassNotFoundException, InstantiationException,
 			IllegalAccessException, RecognitionException {
 
-		MetaGeneric metaGenericAst = TestHelper.firstASTInFile(
-				MetaGeneric.class, GENERIC_IN_FILE_NAME);
+		MetaGenericAst metaGenericAst = TestHelper.firstASTInFile(
+				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
 
 		MetaGenericCompiler compiler = new MetaGenericCompiler();
 		compiler.setIntermediateFolder(INTERMEDIATE_FOLDER);
@@ -86,9 +90,9 @@ public class TransformationTest {
 
 		ClassDeclaration stub = TestHelper.firstASTInFile(
 				ClassDeclaration.class, STUB_IN_FILE_NAME);
-		Typedef typedef = TestHelper.firstASTInFile(Typedef.class,
+		MetaTypedefAst typedef = TestHelper.firstASTInFile(MetaTypedefAst.class,
 				META_TYPEDEF_IN_FILE_NAME);
-		metagenerics.MetaGeneric generic = firstMetaGenericInFile(GENERIC_INTERMEDIATE_FILE_NAME);
+		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_INTERMEDIATE_FILE_NAME);
 
 		generic.setArgument(1, stub);
 		generic.generateClass(typedef, result);
@@ -103,21 +107,23 @@ public class TransformationTest {
 			InstantiationException, IllegalAccessException {
 		StringBuilder result = new StringBuilder();
 		TypedefTransform transform = new TypedefTransform();
-		SymbolTable symbolTable = new SymbolTable();
-
-		Typedef typedef = TestHelper.firstASTInFile(Typedef.class,
+		PackageSymbol rootPackage = new PackageSymbol("");
+		
+		
+		MetaTypedefAst typedef = TestHelper.firstASTInFile(MetaTypedefAst.class,
 				META_TYPEDEF_IN_FILE_NAME);
-		metagenerics.MetaGeneric generic = firstMetaGenericInFile(GENERIC_IN_FILE_NAME);
-		MetaGeneric genericAst = TestHelper.firstASTInFile(MetaGeneric.class,
+		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_IN_FILE_NAME);
+		MetaGenericAst genericAst = TestHelper.firstASTInFile(MetaGenericAst.class,
 				GENERIC_IN_FILE_NAME);
 		ClassDeclaration stub = TestHelper.firstASTInFile(
 				ClassDeclaration.class, STUB_IN_FILE_NAME);
 
 		genericAst.setMetagenericInstance(generic);
-
-		symbolTable.add(stub);
-		symbolTable.add(genericAst);
-		transform.setSymbolTable(symbolTable);
+		MetaTypeDefSymbol metaTypeDefSymbol = new MetaTypeDefSymbol(typedef);
+		metaTypeDefSymbol.setParent(rootPackage);
+		rootPackage.add(new ClassSymbol(stub));
+		rootPackage.add(new MetaGenericSymbol(genericAst));
+		transform.setMetaTypedefSymbol(metaTypeDefSymbol);
 
 		transform.transform(typedef, result);
 
@@ -130,10 +136,10 @@ public class TransformationTest {
 			RecognitionException, InstantiationException,
 			IllegalAccessException {
 		MetaGenericCompiler compiler = new MetaGenericCompiler();
-		MetaGeneric metaGeneric = TestHelper.firstASTInFile(MetaGeneric.class,
+		MetaGenericAst metaGeneric = TestHelper.firstASTInFile(MetaGenericAst.class,
 				GENERIC_IN_FILE_NAME);
 		compiler.setIntermediateFolder(INTERMEDIATE_FOLDER);
-		metagenerics.MetaGeneric genericClass = compiler.compile(metaGeneric);
+		metagenerics.runtime.MetaGeneric genericClass = compiler.compile(metaGeneric);
 		Assert.assertNotNull(genericClass);
 	}
 }

@@ -5,12 +5,12 @@ import static metagenerics.TestHelper.getUnitTestFileName;
 import java.io.File;
 
 import metagenerics.io.ExtensionFilter;
+import metagenerics.io.FileTransform;
 import metagenerics.io.SourcesWalker;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import trash.FileTransform;
 import util.StringUtils;
 
 public class SourceWalkerTest {
@@ -35,7 +35,7 @@ public class SourceWalkerTest {
 			}
 		};
 		// TODO: Prepare some test directory for it ;)
-		SourcesWalker walker = new SourcesWalker(SOURCE_FOLDER,
+		SourcesWalker walker = new SourcesWalker("src",
 				INTERMEDIATE_FOLDER, transform);
 		walker.setFilter(new ExtensionFilter("java"));
 		walker.walk();

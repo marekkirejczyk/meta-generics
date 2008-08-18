@@ -1,31 +1,42 @@
 package metagenerics.visitors;
 
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
-import metagenerics.ast.declarations.MockElement;
 import metagenerics.ast.member.Block;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
 import metagenerics.ast.member.VariableBuilder;
-import metagenerics.ast.metageneric.MetaGeneric;
-import metagenerics.ast.metageneric.Typedef;
-import metagenerics.ast.unit.Unit;
+import metagenerics.ast.metageneric.MetaGenericAst;
+import metagenerics.ast.metageneric.MetaTypedefAst;
+import metagenerics.ast.unit.ImportAst;
+import metagenerics.ast.unit.PackageDeclaration;
+import metagenerics.ast.unit.UnitAst;
+import metagenerics.symbol.type.MetaTypeDefSymbol;
 import metagenerics.transform.metatypedef.TypedefTransform;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import metagenerics.exception.NotImplementedException;
 
 
 
 public class TypedefBuilder implements Visitor {
 
 
-	public void visit(Unit unit) {
+	public void visit(UnitAst unit) {
 		for (Element element : unit.getElements().getElements())
-			if (!(element instanceof MockElement))
+			if (!(element instanceof Semicolon))
 				element.accept(this);
+	}
+
+	public void visit(PackageDeclaration packageAst) {
+		throw new NotImplementedException();
+	}
+	
+	public void visit(ImportAst importAst) {
+		throw new NotImplementedException();
 	}
 
 	public void visit(ClassDeclaration klass) {
@@ -40,14 +51,14 @@ public class TypedefBuilder implements Visitor {
 		throw new NotImplementedException();
 	}
 
-	public void visit(MetaGeneric metaGeneric) {
+	public void visit(MetaGenericAst metaGeneric) {
 
 	}
 
-	public void visit(Typedef typedef) {
+	public void visit(MetaTypedefAst typedef) {
 		StringBuilder result = new StringBuilder();
 		TypedefTransform transform = new TypedefTransform();
-		transform.setSymbolTable(typedef.getSymbolTable());
+		transform.setMetaTypedefSymbol((MetaTypeDefSymbol)typedef.getSymbol());
 		transform.transform(typedef, result);
 		typedef.setTextAfterTransformation(result.toString());
 	}
@@ -72,8 +83,10 @@ public class TypedefBuilder implements Visitor {
 		throw new NotImplementedException();		
 	}
 
-	public void visit(MockElement mock) {
+	public void visit(Semicolon mock) {
 		throw new NotImplementedException();		
 	}
+
+
 
 }
