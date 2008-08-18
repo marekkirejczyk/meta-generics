@@ -1,3 +1,8 @@
+import a.b.c.*;
+import a.b.C;
+import static a.b.c.*;
+import static a.b.C;
+
 
 @Deprecated
 public class ClassExample<A, B> extends SuperClass implements IAb, IBa {

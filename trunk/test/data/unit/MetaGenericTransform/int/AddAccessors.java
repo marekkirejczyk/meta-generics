@@ -1,4 +1,4 @@
-public class AddAccessors extends metagenerics.MetaGeneric {
+public class AddAccessors extends metagenerics.runtime.MetaGeneric {
 	public metagenerics.ast.declarations.ClassDeclaration C;
 
 	public void setArgument(int i, metagenerics.ast.declarations.ClassDeclaration arg) {
@@ -8,7 +8,7 @@ public class AddAccessors extends metagenerics.MetaGeneric {
 		}
 	}
 
-	protected void translateMetaGenerics(metagenerics.ast.metageneric.Typedef typedef, StringBuilder result) { 
+	protected void translateMetaGenerics(metagenerics.ast.metageneric.MetaTypedefAst typedef, StringBuilder result) { 
 {
 	    for (metagenerics.ast.Node e: C.getChildren())
 	      evaluate(e);

@@ -1,18 +1,8 @@
 package somePackage;
 
-import metagenerics.ast.declarations.ClassDeclaration;
-import metagenerics.ast.metageneric.Typedef;
 
-public class Calculator extends metagenerics.MetaGeneric {
+public class Calculator {
 	
-	protected void translateMetaGenerics(Typedef typedef,
-			StringBuilder result) {
-	
-	}
-
-	public void setArgument(int i, ClassDeclaration arg) {
-		
-	}
 	
 	public int get() {
 		return 13;
