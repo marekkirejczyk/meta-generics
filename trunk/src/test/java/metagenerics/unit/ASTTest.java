@@ -3,12 +3,12 @@ package metagenerics.unit;
 import static util.StringUtils.isWhite;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import metagenerics.ast.unit.Unit;
-import metagenerics.io.ExtensionFilter;
+import metagenerics.ast.unit.UnitAst;
 import metagenerics.io.SourcesWalker;
 import metagenerics.transform.parse.MetaJavaLexer;
 import metagenerics.transform.parse.PrettyPrinter;
@@ -90,7 +90,7 @@ public class ASTTest {
 		}
 	}
 
-	private void doCompile(Unit unit, File fileName) throws IOException {
+	private void doCompile(UnitAst unit, File fileName) throws IOException {
 		StringBuilder text = new StringBuilder();
 		new PrettyPrinter(text).visit(unit);
 		List<CommonToken> fromAST = MetaJavaLexer.tokenizeString(text
@@ -102,8 +102,9 @@ public class ASTTest {
 
 	ParseTransformBase byTokenComparator = new ParseTransformBase() {
 		@Override
-		public void compile(Unit unit, File fileName) {
+		public void compile(UnitAst unit, File fileName) {
 			try {
+				
 				doCompile(unit, fileName);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -116,7 +117,11 @@ public class ASTTest {
 	public void tokenComparison() {
 		SourcesWalker walker = new SourcesWalker("test/data/unit/parsing/in",
 				"test/data/unit/parsing/in", byTokenComparator);
-		walker.setFilter(new ExtensionFilter("java"));
+		walker.setFilter(new FilenameFilter() {
+			public boolean accept(File dir, String filename) {
+				return filename.endsWith(".java");
+			}
+		});
 		walker.walk();
 	}
 

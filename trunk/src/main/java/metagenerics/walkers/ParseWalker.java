@@ -6,8 +6,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import metagenerics.ast.unit.Unit;
+import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
+import metagenerics.transform.javacompile.SourceFiles;
 import metagenerics.transform.parse.MetaJavaParser;
 
 import org.antlr.runtime.RecognitionException;
@@ -16,7 +17,7 @@ import util.PathUtils;
 
 public class ParseWalker {
 
-	Map<String, Unit> units = new TreeMap<String, Unit>();
+	Map<String, UnitAst> units = new TreeMap<String, UnitAst>();
 
 	MetaJavaParser parser = new MetaJavaParser();
 
@@ -27,11 +28,11 @@ public class ParseWalker {
 		visitFolder(filename);
 	}
 
-	public Collection<Unit> getUnits() {
+	public Collection<UnitAst> getUnits() {
 		return units.values();
 	}
 
-	public Map<String, Unit> getUnitsWithNames() {
+	public Map<String, UnitAst> getUnitsWithNames() {
 		return units;
 	}
 
@@ -45,10 +46,12 @@ public class ParseWalker {
 			throw new CompileException("Not a directory or file: " + filename);
 	}
 
-	private void visitFile(String file) {
+	private void visitFile(String fileName) {
+		if (!SourceFiles.isSourceFileName(fileName))
+			return;
 		try {
-			String path = PathUtils.pathDiff(file, baseFolder);
-			units.put(path, parser.parse(file));
+			String path = PathUtils.pathDiff(fileName, baseFolder);
+			units.put(path, parser.parse(fileName));
 		} catch (IOException e) {
 			throw new CompileException(e);
 		} catch (RecognitionException e) {

@@ -2,8 +2,8 @@ package metagenerics.transform.metageneric;
 
 import java.io.IOException;
 
-import metagenerics.MetaGeneric;
 import metagenerics.exception.CompileException;
+import metagenerics.runtime.MetaGeneric;
 import metagenerics.transform.javacompile.JavaInPlaceCompiler;
 import util.FileUtils;
 import util.PathUtils;
@@ -23,7 +23,7 @@ public class MetaGenericCompiler {
 
 	MetaGenericTransform metaGenericTransform = new MetaGenericTransform();
 
-	public MetaGeneric compile(metagenerics.ast.metageneric.MetaGeneric ast) {
+	public MetaGeneric compile(metagenerics.ast.metageneric.MetaGenericAst ast) {
 		try {
 			return strict_compile(ast);
 		} catch (IOException e) {
@@ -38,7 +38,7 @@ public class MetaGenericCompiler {
 	}
 
 	public MetaGeneric strict_compile(
-			metagenerics.ast.metageneric.MetaGeneric ast) throws IOException,
+			metagenerics.ast.metageneric.MetaGenericAst ast) throws IOException,
 			InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 		StringBuilder classText = new StringBuilder();
@@ -54,6 +54,6 @@ public class MetaGenericCompiler {
 		Class genericClass = compiler
 				.compile(intermediateFolder, ast.getName());
 
-		return (metagenerics.MetaGeneric) genericClass.newInstance();
+		return (metagenerics.runtime.MetaGeneric) genericClass.newInstance();
 	}
 }

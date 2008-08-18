@@ -2,7 +2,7 @@ package metagenerics.unit;
 
 import static metagenerics.TestHelper.getUnitTestFileName;
 
-import java.io.File;
+import java.io.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,7 +13,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import metagenerics.MetaGeneric;
+import metagenerics.runtime.MetaGeneric;
 import metagenerics.transform.javacompile.CustomDirClassLoader;
 import metagenerics.transform.javacompile.JavaInPlaceCompiler;
 
@@ -41,7 +41,7 @@ public class JavaCompilerTest {
 		Class<MetaGeneric> genericClass = compiler
 				.compile(SOURCE_FOLDER, CLASS_CANONICAL_NAME);
 		Assert.assertNotNull(genericClass);
-		Assert.assertEquals(MetaGeneric.class, genericClass.getSuperclass());
+		Assert.assertEquals(Object.class, genericClass.getSuperclass());
 
 
 	}

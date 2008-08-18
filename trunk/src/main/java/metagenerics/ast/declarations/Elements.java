@@ -3,9 +3,10 @@ package metagenerics.ast.declarations;
 import java.util.ArrayList;
 import java.util.List;
 
+import metagenerics.ast.Node;
 import util.CollectionUtils;
 
-public class Elements extends metagenerics.ast.Node {
+public class Elements extends Node {
 	protected List<Element> elements = new ArrayList<Element>();
 
 	public boolean add(Element element) {
@@ -32,7 +33,5 @@ public class Elements extends metagenerics.ast.Node {
 	public List<Element> getElements() {
 		return elements;
 	}
-	
-	
 
 }

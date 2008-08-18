@@ -1,7 +1,6 @@
 package metagenerics.walkers;
 
 import java.io.File;
-import java.io.IOError;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package util;
 
+import static java.lang.String.format;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,15 +10,30 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import util.exception.UnexpectedMatch;
-import static java.lang.String.*;
 
 public class FolderComparator {
+
+	Filter<String> folderFilter = new Filter<String>() {
+		public boolean accept(String t) {
+			return true;
+		}
+	};
+
+	public Filter<String> getFolderFilter() {
+		return folderFilter;
+	}
+
+	public void setFolderFilter(Filter<String> folderFilter) {
+		this.folderFilter = folderFilter;
+	}
 
 	public Set<String> listAllFiles(String filename) {
 		File file = new File(filename);
 		if (file.isFile())
 			return Collections.singleton(filename);
 		else if (file.isDirectory()) {
+			if (!folderFilter.accept(file.getName()))
+				return Collections.EMPTY_SET;
 			Set<String> result = new TreeSet<String>();
 			for (File element : file.listFiles()) {
 				result.addAll(listAllFiles(element.getPath()));

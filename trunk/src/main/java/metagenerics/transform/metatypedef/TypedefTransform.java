@@ -1,34 +1,38 @@
 package metagenerics.transform.metatypedef;
 
 import metagenerics.ast.declarations.ClassDeclaration;
-import metagenerics.ast.metageneric.MetaGeneric;
-import metagenerics.ast.metageneric.Typedef;
+import metagenerics.ast.metageneric.MetaGenericAst;
+import metagenerics.ast.metageneric.MetaTypedefAst;
+import metagenerics.symbol.Symbol;
 import metagenerics.symbol.SymbolTable;
+import metagenerics.symbol.type.MetaTypeDefSymbol;
 
 public class TypedefTransform {
 
-	SymbolTable symbolTable;
+	MetaTypeDefSymbol metaTypedefSymbol;
 
-	public void transform(Typedef typedef, StringBuilder result) {
+	public void transform(MetaTypedefAst typedef, StringBuilder result) {
 		int i = 1;
-		MetaGeneric metaGenericAst = (MetaGeneric) symbolTable.get(typedef
-				.getFunction());
-
-		metagenerics.MetaGeneric metaGeneric = metaGenericAst
+		String functionName = typedef.getFunction();
+		Symbol functionSymbol = metaTypedefSymbol.lookup(functionName);
+		MetaGenericAst metaGenericAst = (MetaGenericAst) functionSymbol
+				.getAstNode();
+		metagenerics.runtime.MetaGeneric metaGeneric = metaGenericAst
 				.getMetagenericInstance();
 		for (String parameter : typedef.getParameters()) {
-			ClassDeclaration cd = (ClassDeclaration) symbolTable.get(parameter);
+			Symbol classSymbol = metaTypedefSymbol.lookup(parameter);
+			ClassDeclaration cd = (ClassDeclaration) classSymbol.getAstNode();
 			metaGeneric.setArgument(i++, cd);
 		}
 		metaGeneric.generateClass(typedef, result);
 	}
 
-	public SymbolTable getSymbolTable() {
-		return symbolTable;
+	public SymbolTable getMetaTypedefSymbol() {
+		return metaTypedefSymbol;
 	}
 
-	public void setSymbolTable(SymbolTable symbolTable) {
-		this.symbolTable = symbolTable;
+	public void setMetaTypedefSymbol(MetaTypeDefSymbol symbolTable) {
+		this.metaTypedefSymbol = symbolTable;
 	}
 
 }

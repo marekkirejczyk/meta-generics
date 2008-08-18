@@ -3,8 +3,6 @@ package metagenerics.transform.parse;
 import java.io.IOException;
 import java.util.List;
 
-import metagenerics.compile.parse.JavaLexer;
-
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
@@ -15,7 +13,7 @@ public class MetaJavaLexer {
 
 	static public List<CommonToken> tokenizeStream(CharStream cs)
 			throws IOException {
-		JavaLexer lexer = new JavaLexer();
+		metagenerics.compile.parse.MetaJavaLexer lexer = new metagenerics.compile.parse.MetaJavaLexer();
 		lexer.setCharStream(cs);
 		CommonTokenStream tokens = new CommonTokenStream();
 		tokens.setTokenSource(lexer);

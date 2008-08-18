@@ -2,11 +2,15 @@ package metagenerics.transform.metageneric;
 
 import metagenerics.ast.Node;
 import metagenerics.ast.member.Block;
-import metagenerics.ast.metageneric.MetaGeneric;
+import metagenerics.ast.metageneric.MetaGenericAst;
 
 public class MetaGenericTransform {
-	final static String type = "metagenerics.ast.declarations.ClassDeclaration";
+	final static String classAstType = "metagenerics.ast.declarations.ClassDeclaration";
 
+	final static String metaTypedefAstType = "metagenerics.ast.metageneric.MetaTypedefAst";
+
+	final static String metaGenericAstType = "metagenerics.runtime.MetaGeneric";
+	
 	boolean useOriginalModifiers = true;
 
 	public boolean isUseOriginalModifiers() {
@@ -17,19 +21,20 @@ public class MetaGenericTransform {
 		this.useOriginalModifiers = useOriginalModifiers;
 	}
 
-	public void transform(MetaGeneric metaGeneric, StringBuilder result) {
+	public void transform(MetaGenericAst metaGeneric, StringBuilder result) {
 		if (useOriginalModifiers)
 			result.append(metaGeneric.getModifiers().getText());
 		else
 			result.append("public");
 
 		result.append(" class " + metaGeneric.getName()
-				+ " extends metagenerics.MetaGeneric {\n");
+				+ " extends " + metaGenericAstType + " {\n");
 		int i = 1;
 		for (String arg : metaGeneric.getGenericParameters())
-			result.append(String.format("\tpublic %1$s %2$s;\n", type, arg));
+			result.append(String.format("\tpublic %1$s %2$s;\n", classAstType,
+					arg));
 
-		result.append("\n\tpublic void setArgument(int i, " + type
+		result.append("\n\tpublic void setArgument(int i, " + classAstType
 				+ " arg) {\n");
 		result.append("\t\tswitch (i) {\n");
 
@@ -42,7 +47,7 @@ public class MetaGenericTransform {
 		result.append("\t\t}\n\t}\n");
 
 		result
-				.append("\n\tprotected void translateMetaGenerics(metagenerics.ast.metageneric.Typedef typedef, StringBuilder result) { \n");
+				.append("\n\tprotected void translateMetaGenerics(" + metaTypedefAstType +" typedef, StringBuilder result) { \n");
 
 		for (Node node : metaGeneric.getChildren())
 			if (node instanceof Block) {
