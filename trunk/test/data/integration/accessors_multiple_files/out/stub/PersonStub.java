@@ -1,4 +1,10 @@
-class PersonStub 
+package stub;
+
+import model.Adress;
+
+import framework.*;
+
+public class PersonStub 
 {
   @Getter
   @Setter
