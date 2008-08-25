@@ -1,26 +1,21 @@
 package metagenerics.ast.common;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import metagenerics.ast.Node;
 
 public class Annotation extends Node {
-	
 	String name;
-	
-	Map<String, String> args = new TreeMap<String, String>();
 
-	public boolean containsArgument(String arg0) {
-		return args.containsKey(arg0);
+	List<Argument> arguments = new ArrayList<Argument>();
+
+	public List<Argument> getArguments() {
+		return arguments;
 	}
 
-	public String getArgument(String arg0) {
-		return args.get(arg0);
-	}
-
-	public String addArgument(String arg0, String arg1) {
-		return args.put(arg0, arg1);
+	public void setArguments(List<Argument> arguments) {
+		this.arguments = arguments;
 	}
 
 	public String getName() {
@@ -30,6 +25,16 @@ public class Annotation extends Node {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getArgumentText(String name) {
+		for (Argument argument: getArguments())
+			if (argument.getType().equals(name))
+				return argument.getName();
+		return null;
+	}
 	
-	
+	public String getStringArgument(String name) {
+		String arg = getArgumentText(name);
+		return arg.substring(1, arg.length()-1);
+	}
 }

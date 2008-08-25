@@ -16,6 +16,16 @@ public class ImportAst extends Node {
 
 	boolean isGeneral = false;
 
+	public ImportAst() {
+		
+	}
+
+	public ImportAst(String path, boolean isGeneral) {
+		for (String element: path.split("\\."))
+			addIdentifier(element);
+		this.isGeneral = isGeneral;
+	}
+	
 	public boolean isGeneral() {
 		return isGeneral;
 	}
@@ -47,5 +57,6 @@ public class ImportAst extends Node {
 
 	public String getPath() {
 		return StringUtils.formatCollection(identifiers, ".");
-	}
+	}	
+	
 }

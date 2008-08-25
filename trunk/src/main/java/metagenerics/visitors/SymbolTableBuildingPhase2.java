@@ -1,17 +1,17 @@
 package metagenerics.visitors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -53,12 +53,11 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 
 		Symbol symbol = rootPackage.localLookup(importAst.getPath());
 		if (symbol == null) {
-			System.err.println("null! " + importAst.getIdentifiers());
+			System.err.println("Import not resolved: "
+					+ importAst.getPath());
 			return;
-			// throw new UnknownSymbolException();
-		}
-		if (importAst.isStatic()) {
-
+		} else if (importAst.isStatic()) {
+			//TODO
 		} else {
 			if (importAst.isGeneral() && symbol instanceof PackageSymbol)
 				currentUnit.addPackageImport((PackageSymbol) symbol);
@@ -105,23 +104,31 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 
 	}
 
+	public void visit(Method method) {
+
+	}
+
+	public void visit(Constructor constructor) {
+
+	}
+
 	public void visit(Field field) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void visit(Block block) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void visit(MemberMock mock) {
-		// TODO Auto-generated method stub
 
 	}
 
 	public void visit(Semicolon mock) {
-		// TODO Auto-generated method stub
+
+	}
+
+	public void visit(Modifiers modifiers) {
 
 	}
 

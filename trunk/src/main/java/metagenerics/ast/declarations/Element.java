@@ -9,6 +9,7 @@ import metagenerics.ast.Node;
 import metagenerics.ast.common.Annotations;
 import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Member;
 import metagenerics.ast.member.Members;
 import metagenerics.ast.member.VariableBuilder;
@@ -19,7 +20,7 @@ abstract public class Element extends Node {
 
 	protected Modifiers modifiers = new Modifiers();
 
-	protected Annotations annotations;
+	
 	
 	protected Elements elements = new Elements();
 	
@@ -36,12 +37,10 @@ abstract public class Element extends Node {
 	}
 
 	public Annotations getAnnotations() {
-		return annotations;
+		return getModifiers().getAnnotations();
 	}
 
-	public void setAnnotations(Annotations annotations) {
-		this.annotations = annotations;
-	}
+	
 
 	public Modifiers getModifiers() {
 		return modifiers;
@@ -88,6 +87,10 @@ abstract public class Element extends Node {
 				members.add((Block) node);
 			else
 				throw new UnexpectedMatch(node.getClass());
+	}
+
+	public List<Constructor> getConstructors() {
+		return members.getConstructors();
 	}
 	
 	

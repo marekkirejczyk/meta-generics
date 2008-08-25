@@ -7,8 +7,6 @@ import metagenerics.ast.Visitor;
 import metagenerics.ast.common.Annotations;
 import metagenerics.ast.common.Modifiers;
 
-import org.antlr.runtime.Token;
-
 public class VariableBuilder extends Member {
 
 	String type;
@@ -33,16 +31,12 @@ public class VariableBuilder extends Member {
 		this.modifiers = modifiers;
 	}
 
-	public void add(String name, Token start, Token stop, String text) {
-		Field field = new Field();
-		field.setName(name);
-		field.setInfo(start, stop, text);
+	public void add(Field field) {
 		names.add(field);
 	}
 
-
 	public List<Field> getFields() {
-		for (Field field: names) {
+		for (Field field : names) {
 			field.setModifiers(modifiers);
 			field.setType(type);
 		}
@@ -57,5 +51,5 @@ public class VariableBuilder extends Member {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 }

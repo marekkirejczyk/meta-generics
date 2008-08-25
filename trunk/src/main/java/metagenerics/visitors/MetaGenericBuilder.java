@@ -1,6 +1,7 @@
 package metagenerics.visitors;
 
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
@@ -8,8 +9,10 @@ import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -26,21 +29,23 @@ public class MetaGenericBuilder implements Visitor {
 
 	MetaGenericTransform transfom = new MetaGenericTransform();
 
+	UnitAst currentUnit;
+	
 	public void visit(UnitAst unit) {
+		currentUnit = unit;
 		for (Element element : unit.getElements().getElements())
 			if (!(element instanceof Semicolon))
 				element.accept(this);
 	}
-	
+
 	public void visit(PackageDeclaration unit) {
 		throw new NotImplementedException();
 	}
-	
+
 	public void visit(ImportAst importAst) {
 		throw new NotImplementedException();
 	}
 
-	
 	public void visit(ClassDeclaration klass) {
 
 	}
@@ -55,9 +60,9 @@ public class MetaGenericBuilder implements Visitor {
 
 	public void visit(MetaGenericAst metaGenericAst) {
 		StringBuilder result = new StringBuilder();
-		//transfom.setUseOriginalModifiers(false);
 		transfom.transform(metaGenericAst, result);
 		metaGenericAst.setTextAfterTransformation(result.toString());
+		metaGenericAst.getStandardImports().addAll(currentUnit.getImports());
 		metaGenericAst.setMetagenericInstance(compiler.compile(metaGenericAst));
 	}
 
@@ -97,8 +102,16 @@ public class MetaGenericBuilder implements Visitor {
 		throw new NotImplementedException();
 	}
 
+	public void visit(Method method) {
+		throw new NotImplementedException();
+	}
 
+	public void visit(Constructor constructor) {
+		throw new NotImplementedException();
+	}
 
-
+	public void visit(Modifiers modifiers) {
+		throw new NotImplementedException();
+	}
 
 }

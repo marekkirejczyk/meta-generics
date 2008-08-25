@@ -1,16 +1,16 @@
 package metagenerics;
 
-import metagenerics.integration.IntegrationTest;
 import metagenerics.unit.ASTTest;
 import metagenerics.unit.CommandLineArgumentsTest;
 import metagenerics.unit.CommonTokenListComparatorTest;
+import metagenerics.unit.FolderCompareTest;
 import metagenerics.unit.JavaCompilerTest;
 import metagenerics.unit.ParseTest;
 import metagenerics.unit.SourceListWalkerTest;
 import metagenerics.unit.SourceWalkerTest;
 import metagenerics.unit.SymbolTableBuilderTest;
 import metagenerics.unit.TransformationTest;
-import metagenerics.unit.FolderCompareTest;
+import metagenerics.unit.UtilsTest;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -20,7 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(value = { ASTTest.class, TransformationTest.class,
 		ParseTest.class, SourceWalkerTest.class, FolderCompareTest.class,
 		CommonTokenListComparatorTest.class, SymbolTableBuilderTest.class,
-		JavaCompilerTest.class,
+		JavaCompilerTest.class, UtilsTest.class,
 		SourceListWalkerTest.class, CommandLineArgumentsTest.class })
 public class UnitTests {
 

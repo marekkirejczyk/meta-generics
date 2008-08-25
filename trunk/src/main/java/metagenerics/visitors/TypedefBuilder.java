@@ -1,6 +1,10 @@
 package metagenerics.visitors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
@@ -8,8 +12,10 @@ import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -20,21 +26,32 @@ import metagenerics.symbol.type.MetaTypeDefSymbol;
 import metagenerics.transform.metatypedef.TypedefTransform;
 import metagenerics.exception.NotImplementedException;
 
-
-
 public class TypedefBuilder implements Visitor {
-
 
 	public void visit(UnitAst unit) {
 		for (Element element : unit.getElements().getElements())
-			if (!(element instanceof Semicolon))
-				element.accept(this);
+			element.accept(this);
+
+		List<Element> removeList = new ArrayList<Element>();
+
+		for (Element element : unit.getElements().getElements()) {
+			if (element instanceof ClassDeclaration) {
+				ClassDeclaration cd = (ClassDeclaration) element;
+				boolean notNull = cd.getAnnotations() != null;
+
+				if (notNull
+						&& cd.getAnnotations().containsAnnotation("Disappear")) {
+					removeList.add(cd);
+				}
+			}
+		}
+		unit.getElements().getElements().removeAll(removeList);
 	}
 
 	public void visit(PackageDeclaration packageAst) {
 		throw new NotImplementedException();
 	}
-	
+
 	public void visit(ImportAst importAst) {
 		throw new NotImplementedException();
 	}
@@ -58,9 +75,12 @@ public class TypedefBuilder implements Visitor {
 	public void visit(MetaTypedefAst typedef) {
 		StringBuilder result = new StringBuilder();
 		TypedefTransform transform = new TypedefTransform();
-		transform.setMetaTypedefSymbol((MetaTypeDefSymbol)typedef.getSymbol());
+		MetaTypeDefSymbol symbol = (MetaTypeDefSymbol) typedef.getSymbol();
+		transform.setMetaTypedefSymbol(symbol);
 		transform.transform(typedef, result);
 		typedef.setTextAfterTransformation(result.toString());
+		
+		
 	}
 
 	public void visit(AnnotationDeclaration klass) {
@@ -80,13 +100,22 @@ public class TypedefBuilder implements Visitor {
 	}
 
 	public void visit(MemberMock mock) {
-		throw new NotImplementedException();		
+		throw new NotImplementedException();
 	}
 
 	public void visit(Semicolon mock) {
-		throw new NotImplementedException();		
 	}
 
+	public void visit(Method method) {
+		throw new NotImplementedException();
+	}
 
+	public void visit(Constructor constructor) {
+		throw new NotImplementedException();
+	}
+
+	public void visit(Modifiers modifiers) {
+		throw new NotImplementedException();
+	}
 
 }

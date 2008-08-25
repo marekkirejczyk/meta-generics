@@ -2,7 +2,6 @@ package metagenerics.ast;
 
 import metagenerics.exception.NotImplementedException;
 import metagenerics.symbol.Symbol;
-import metagenerics.symbol.SymbolTable;
 
 import org.antlr.runtime.Token;
 
@@ -49,7 +48,7 @@ public class Node implements Visitable {
 		throw new NotImplementedException();
 	}
 
-	public SymbolTable getSymbol() {
+	public Symbol getSymbol() {
 		return symbol;
 	}
 

@@ -41,6 +41,11 @@ public class ClassDeclaration extends Element {
 		return members.getMethods();
 	}
 
+	public Method getMethod(String name) {
+		return members.getMethod(name);
+	}
+	
+	
 	public List<Field> getFields() {
 		return members.getFields();
 	}

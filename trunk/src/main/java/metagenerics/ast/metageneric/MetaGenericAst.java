@@ -1,19 +1,24 @@
 package metagenerics.ast.metageneric;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import metagenerics.ast.Visitor;
+import metagenerics.ast.unit.ImportAst;
+import metagenerics.ast.unit.UnitAst;
+import metagenerics.runtime.MetaGeneric;
 
 public class MetaGenericAst extends MetaDeclaration {
 
-	metagenerics.runtime.MetaGeneric metagenericInstance;
-	
+	MetaGeneric metagenericInstance;
+
 	String textAfterTransformation;
-	
+
 	String superClass;
-	
+
 	List<String> implementedInterfaces;
-	
+
 	List<String> genericParameters;
 
 	public String getSuperClass() {
@@ -49,13 +54,15 @@ public class MetaGenericAst extends MetaDeclaration {
 		return metagenericInstance;
 	}
 
-	public void setMetagenericInstance(metagenerics.runtime.MetaGeneric metagenericInstance) {
+	public void setMetagenericInstance(
+			metagenerics.runtime.MetaGeneric metagenericInstance) {
 		this.metagenericInstance = metagenericInstance;
 	}
 
 	@Override
 	public String getText() {
-		return getTextAfterTransformation() == null ? super.getText() : getTextAfterTransformation();
+		return getTextAfterTransformation() == null ? super.getText()
+				: getTextAfterTransformation();
 	}
 
 	public String getTextAfterTransformation() {
@@ -66,6 +73,30 @@ public class MetaGenericAst extends MetaDeclaration {
 		this.textAfterTransformation = textAfterTransformation;
 	}
 
-	
-	
+	public List<ImportAst> getUnitImports() {
+		try {
+			UnitAst unitAst = (UnitAst) getSymbol().getUnit().getAstNode();
+			return unitAst.getImports();
+		} catch (NullPointerException e) {
+			// TODO: this is only for testing -> remove
+			return Collections.EMPTY_LIST;
+		}
+	}
+
+	public List<ImportAst> getImports() {
+		List<ImportAst> imports = new ArrayList<ImportAst>();
+		imports.addAll(getStandardImports());
+		imports.addAll(getUnitImports());
+		return imports;
+	}
+
+	static public List<ImportAst> getStandardImports() {
+		List<ImportAst> imports = new ArrayList<ImportAst>();
+		imports.add(new ImportAst("metagenerics.ast", true));
+		imports.add(new ImportAst("metagenerics.ast.declarations", true));
+		imports.add(new ImportAst("metagenerics.ast.member", true));
+		imports.add(new ImportAst("metagenerics.ast.common", true));
+		return imports;
+	}
+
 }

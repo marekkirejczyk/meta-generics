@@ -28,4 +28,10 @@ public class Members {
 		return CollectionUtils.filterByClass(members, Constructor.class);
 	}
 
+	public Method getMethod(String name) {
+		for (Method m: CollectionUtils.filterByClass(members, Method.class))
+			if (m.getName().equals(name))
+				return m;
+		return null;
+	}
 }
