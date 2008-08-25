@@ -6,8 +6,6 @@ import static metagenerics.TestHelper.getIntegrationTestFileName;
 
 import java.util.Map;
 
-import junit.framework.Assert;
-
 import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.symbol.PackageSymbol;
@@ -15,9 +13,7 @@ import metagenerics.symbol.Symbol;
 import metagenerics.symbol.SymbolTable;
 import metagenerics.symbol.UnitSymbol;
 import metagenerics.symbol.type.ClassSymbol;
-import metagenerics.symbol.type.MetaGenericSymbol;
 import metagenerics.symbol.type.MetaTypeDefSymbol;
-import metagenerics.transform.parse.PrettyPrinter;
 import metagenerics.visitors.MetaGenericBuilder;
 import metagenerics.visitors.SymbolTableBuilder;
 import metagenerics.visitors.TypedefBuilder;

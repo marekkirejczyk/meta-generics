@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import metagenerics.ast.Node;
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
@@ -11,8 +12,10 @@ import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -20,6 +23,7 @@ import metagenerics.ast.unit.ImportAst;
 import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
+import util.CollectionUtils;
 import util.StringUtils;
 
 public class PrettyPrinter implements Visitor {
@@ -73,8 +77,8 @@ public class PrettyPrinter implements Visitor {
 	}
 
 	public void visit(ClassDeclaration klass) {
-		append(klass.getModifiers().getText() + " " + "class "
-				+ klass.getName());
+		klass.getModifiers().accept(this);
+		append(" " + "class " + klass.getName());
 		if (klass.getGenericParameters() != null)
 			append("<"
 					+ StringUtils.formatCollection(
@@ -151,8 +155,33 @@ public class PrettyPrinter implements Visitor {
 		 */
 	}
 
+	public void visit(Method method) {
+		method.getModifiers().accept(this);
+		if (method.getGenericParameters() != null) {
+			append("<");
+			append(CollectionUtils.toString(method.getGenericParameters(), ","));
+			append("> ");
+		}
+		append(method.getType());
+		append(" " + method.getName());
+		append(method.getRest());
+
+	}
+
+	public void visit(Constructor constructor) {
+		constructor.getModifiers().accept(this);
+		if (constructor.getGenericParameters() != null) {
+			append("<");
+			append(CollectionUtils.toString(constructor.getGenericParameters(),
+					","));
+			append("> ");
+		}
+		append(constructor.getName());
+		append(constructor.getRest());
+	}
+
 	public void visit(Field field) {
-		append(field.getType() + " " + field.getName() + ";");
+		append(field.getType() + " " + field.getName() + field.getRest() + ";");
 	}
 
 	public void visit(Block block) {
@@ -171,6 +200,12 @@ public class PrettyPrinter implements Visitor {
 
 	public void visit(Semicolon semicolonAst) {
 		append(";");
+	}
+
+	public void visit(Modifiers modifiers) {
+		append(modifiers.getText());
+		if (modifiers.getText().length() > 0)
+			append(" ");
 	}
 
 }

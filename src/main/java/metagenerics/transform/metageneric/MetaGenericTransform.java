@@ -1,5 +1,6 @@
 package metagenerics.transform.metageneric;
 
+import util.StringUtils;
 import metagenerics.ast.Node;
 import metagenerics.ast.member.Block;
 import metagenerics.ast.metageneric.MetaGenericAst;
@@ -55,9 +56,10 @@ public class MetaGenericTransform {
 				if (block.getType() == Block.Type.META)
 					result.append(block.getInstructionBlock().getText());
 			} else {
-
+				String text = node.getText().replaceAll("\n", "");
+				text = StringUtils.escapeCharacters(text);
 				result.append("evaluate(\""
-						+ node.getText().replaceAll("\n", "") + "\");");
+						+ text + "\");");
 			}
 
 		result.append("\n } }\n");

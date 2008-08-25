@@ -68,10 +68,10 @@ public class JavaCompilerTest {
 
 		CustomDirClassLoader loader = new CustomDirClassLoader(
 				"test/data/unit/JavaCompiler/");
-		Class c = loader.loadClass("somePackage.Calculator");
+		Class<? extends Object> c = loader.loadClass("somePackage.Calculator");
 		Object o = c.newInstance();
-		Method m = c.getMethod("get", null);
-		Object result = m.invoke(o, null);
+		Method m = c.getMethod("get");
+		Object result = m.invoke(o);
 		Assert.assertEquals(result, 13);
 		m = c.getMethod("add", int.class, int.class);
 		result = m.invoke(o, 2, 3);

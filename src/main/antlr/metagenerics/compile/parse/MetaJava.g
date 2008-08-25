@@ -94,7 +94,10 @@ import metagenerics.ast.member.*;
 import metagenerics.ast.declarations.*;
 import metagenerics.ast.unit.*;
 import metagenerics.ast.*;
+
 } 
+
+
 
 @lexer::members {
 protected boolean enumIsKeyword = true;
@@ -297,9 +300,9 @@ modifiers returns [Modifiers value = new Modifiers();]
 	
 classBodyDeclaration returns [List<Node> value = new ArrayList<Node>();]
 	:	';' {
-			MemberMock member = new MemberMock();
-			member.setInfo($start, $stop, $text);
-			$value.add(member);
+			Semicolon semicolon = new Semicolon ();
+			semicolon.setInfo($start, $stop, $text);
+			$value.add(semicolon);
 		}
 	|	(s='static' | m='meta')? block {
 			Block member = new Block();
@@ -311,43 +314,66 @@ classBodyDeclaration returns [List<Node> value = new ArrayList<Node>();]
 			member.setInstructionBlock(new InstructionBlock($block.start, $block.stop, $block.text));
 			$value.add(member);
 		}
-	|	modifiers memberDecl  {
-			if ($memberDecl.value instanceof VariableBuilder) {
-				((VariableBuilder)$memberDecl.value).setModifiers($modifiers.value);
-				$memberDecl.value.setInfo($start, $stop, $text);
-				$value.add($memberDecl.value);
-			} else {
-				MemberMock member = new MemberMock();
-				member.setInfo($start, $stop, $text);
-				$value.add(member);
-			}
+	|	modifiers d=memberDecl  {
+			((Element)$memberDecl.value).setModifiers($modifiers.value);
+			$memberDecl.value.setInfo($start, $stop, $text);
+			$value.add($memberDecl.value);
 		}
 	;
 	
-memberDecl  returns [Node value = new MemberMock();]
-	:	genericMethodOrConstructorDecl
-	|	methodDeclaration 
+memberDecl returns [Node value]
+	:	rest1=genericMethodOrConstructorDecl {
+		$value = $rest1.value;
+	}
+	|	methodDeclaration  {
+		$value = $methodDeclaration.value;
+	}
+	|	'void' id=Identifier voidMethodDeclaratorRest {
+		Method m = (Method)$voidMethodDeclaratorRest.value;
+		$value = m;
+		m.setName($id.text);
+		m.setType("void");
+	}
+	|	id=Identifier rest2=constructorDeclaratorRest {
+		$value = $rest2.value;
+		((AbstractMethod)$value).setName($id.getText());
+	}
 	|	fieldDeclaration {
 		$value = $fieldDeclaration.value;
-		$value.setInfo($start, $stop, $text);			
 	}
-	|	'void' Identifier voidMethodDeclaratorRest
-	|	Identifier constructorDeclaratorRest
-	|	interfaceDeclaration  
-	|	classDeclaration
+	|	interfaceDeclaration {
+		$value = $interfaceDeclaration.value;
+	}
+	|	classDeclaration {
+		$value = $classDeclaration.value;
+	}
 	;
 	
-genericMethodOrConstructorDecl
-	:	typeParameters genericMethodOrConstructorRest
+genericMethodOrConstructorDecl returns [AbstractMethod value]
+	:	t=typeParameters rest=genericMethodOrConstructorRest {
+		$value = $rest.value;
+		$value.setGenericParameters($t.value);
+	}
 	;
 	
-genericMethodOrConstructorRest
-	:	(type | 'void') Identifier methodDeclaratorRest
-	|	Identifier constructorDeclaratorRest
+genericMethodOrConstructorRest returns [AbstractMethod value]
+	:	(t=type | 'void') id=Identifier rest1=methodDeclaratorRest {
+		$value = $rest1.value;
+		((Method)$value).setType(t == null ? "void" : $t.text);
+		$value.setName($id.text);
+	}
+	|	id=Identifier rest2=constructorDeclaratorRest {
+		$value = $rest2.value;
+		$value.setName($id.text);
+	}
 	;
 
-methodDeclaration
-	:	type Identifier methodDeclaratorRest
+methodDeclaration returns [Method value]
+	:	t=type id=Identifier rest=methodDeclaratorRest {
+		$value = $rest.value;
+		$value.setType($type.text);
+		$value.setName($id.text);
+		}
 	;
 
 fieldDeclaration returns [VariableBuilder value] 
@@ -379,19 +405,31 @@ interfaceMethodOrFieldRest
 	|	interfaceMethodDeclaratorRest
 	;
 	
-methodDeclaratorRest
-	:	formalParameters ('[' ']')*
+methodDeclaratorRest returns [Method value = new Method();]
+	:	p=formalParameters ('[' ']')*
         ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
-        )
+        ( b=methodBody | ';' ) {
+        	if (b != null) {
+				Block block = new Block();
+				block.setInfo($b.start, $b.stop, $b.text);
+	        	$value.setBlock(block);
+        	}
+			$value.setRest($text);
+			$value.setArguments($p.value);
+        }
 	;
 	
-voidMethodDeclaratorRest
-	:	formalParameters ('throws' qualifiedNameList)?
-        (   methodBody
-        |   ';'
-        )
+voidMethodDeclaratorRest returns [Method value = new Method();]
+	:	parameters=formalParameters ('throws' qualifiedNameList)?
+        ( body=methodBody | ';') {
+			if (body != null) {
+        		Block block = new Block();
+				block.setInfo($body.start, $body.stop, $body.text);
+  	        	$value.setBlock(block);
+        	}
+			$value.setRest($text);
+			$value.setArguments($parameters.value);
+        }
 	;
 	
 interfaceMethodDeclaratorRest
@@ -407,8 +445,10 @@ voidInterfaceMethodDeclaratorRest
 	:	formalParameters ('throws' qualifiedNameList)? ';'
 	;
 	
-constructorDeclaratorRest
-	:	formalParameters ('throws' qualifiedNameList)? methodBody
+constructorDeclaratorRest returns [Constructor value = new Constructor();]
+	:	formalParameters ('throws' qualifiedNameList)? methodBody {
+		$value.setRest($text);
+	}
 	;
 
 constantDeclarator
@@ -416,11 +456,16 @@ constantDeclarator
 	;
 	
 variableDeclarators returns  [VariableBuilder value = new VariableBuilder();]
-	:	first=variableDeclarator {$value.add($first.value, $first.start, $first.stop, $first.text);} (',' each=variableDeclarator {$value.add($each.value, $each.start, $each.stop, $each.text);})*
+	:	v1=variableDeclarator {$value.add($v1.value);}
+	 (',' vn=variableDeclarator {$value.add($vn.value);})*
 	;
 
-variableDeclarator returns [String value]    
-	:	Identifier variableDeclaratorRest {$value = $Identifier.text;}
+variableDeclarator returns [Field value = new Field()]    
+	:	id=Identifier rest=variableDeclaratorRest {
+		$value.setName($id.text);
+		$value.setRest($rest.text);
+		$value.setInfo($start, $stop, $text);
+	}
 	;
 	
 variableDeclaratorRest 
@@ -512,18 +557,24 @@ qualifiedNameList
 	:	qualifiedName (',' qualifiedName)*
 	;
 	
-formalParameters
-	:	'(' formalParameterDecls? ')'
+formalParameters returns [List<Argument> value]
+	:	'(' d=formalParameterDecls? ')' {
+		value = (d == null) ? new ArrayList<Argument>() : $d.value;
+	}
+	;
+
+
+formalParameterDecls returns [List<Argument> value = new ArrayList<Argument>();]
+	: p1=formalParameter {
+		$value.add($p1.value);
+	  }
+	  (',' pi=formalParameter {$value.add($pi.value);})* 
+	  (variableModifier* t=type '...' d=variableDeclaratorId {
+	  	$value.add(new Argument($t.text,$d.text));
+	  }) ?
 	;
 	
-formalParameterDecls
-	:	variableModifier* type formalParameterDeclsRest?
-	;
-	
-formalParameterDeclsRest
-	:	variableDeclaratorId (',' formalParameterDecls)?
-	|   '...' variableDeclaratorId
-	;
+
 	
 methodBody
 	:	block
@@ -561,10 +612,10 @@ annotations returns [Annotations value = new Annotations();]
 	;
 
 annotation returns [Annotation value = new Annotation();]
-	:	('@' name=annotationName ('(' elementValuePairs? ')')?) {
+	:	('@' name=annotationName ('(' args=elementValuePairs? ')')?) {
 			$value.setName($name.text);
 			$value.setInfo($start, $stop, $annotation.text);
-		
+			$value.setArguments($args.value);
 		}
 	;
 	
@@ -572,12 +623,15 @@ annotationName
 	: Identifier ('.' Identifier)*
 	;
 	
-elementValuePairs
-	: elementValuePair (',' elementValuePair)*
+elementValuePairs returns [List<Argument> value = new ArrayList<Argument>();]
+	: e1=elementValuePair {$value.add($e1.value);} (',' en=elementValuePair {$value.add($en.value);})*
 	;
 	
-elementValuePair
-	: (Identifier '=')? elementValue
+elementValuePair returns [Argument value]
+	: (id=Identifier '=')? v=elementValue {
+		String idName = ($id.text == null) ? "" : $id.text;
+		$value = new Argument(idName, $v.text);
+	}
 	;
 	
 elementValue
@@ -681,8 +735,10 @@ catchClause
 	:	'catch' '(' formalParameter ')' block
 	;
 
-formalParameter
-	:	variableModifier* type variableDeclaratorId
+formalParameter returns [Argument value]
+	:	variableModifier* t=type n=variableDeclaratorId {
+		$value = new Argument($t.text, $n.text);
+	}
 	;
 		
 switchBlockStatementGroups

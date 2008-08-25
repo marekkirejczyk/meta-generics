@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import metagenerics.ast.unit.UnitAst;
+import metagenerics.exception.CompileException;
 import metagenerics.io.FileTransform;
 import metagenerics.transform.parse.MetaJavaParser;
 
@@ -18,9 +19,9 @@ public abstract class ParseTransformBase extends FileTransform {
 		try {
 			compile(new MetaJavaParser().parse(inputFileName), outputFileName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CompileException(e);
 		} catch (RecognitionException e) {
-			e.printStackTrace();
+			throw new CompileException(e);
 		}
 	}
 

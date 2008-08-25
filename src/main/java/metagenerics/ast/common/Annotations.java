@@ -25,5 +25,12 @@ public class Annotations extends Node implements Iterable<Annotation> {
 		return false;
 	}
 	
+	public Annotation getAnnotation(String arg) {
+		for (Annotation annotation : annotations)
+			if (annotation.getName().equals(arg))
+				return annotation;
+		return null;
+	}
+	
 	
 }

@@ -1,13 +1,16 @@
 package metagenerics.ast;
 
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -39,6 +42,10 @@ public interface Visitor {
 
 	
 	public void visit(VariableBuilder vb);
+	
+	public void visit(Method method);
+	
+	public void visit(Constructor constructor);
 
 	public void visit(Field field);
 
@@ -48,4 +55,6 @@ public interface Visitor {
 
 	public void visit(Semicolon mock);
 
+	
+	public void visit(Modifiers modifiers);
 }

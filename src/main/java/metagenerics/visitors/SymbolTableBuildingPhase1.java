@@ -3,6 +3,7 @@ package metagenerics.visitors;
 import java.util.List;
 
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
@@ -10,8 +11,10 @@ import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
+import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Field;
 import metagenerics.ast.member.MemberMock;
+import metagenerics.ast.member.Method;
 import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
@@ -121,6 +124,15 @@ public class SymbolTableBuildingPhase1 implements Visitor {
 		throw new NotImplementedException();
 	}
 
+	public void visit(Method method) {
+		throw new NotImplementedException();		
+	}
+
+	public void visit(Constructor constructor) {
+		throw new NotImplementedException();		
+	}
+
+	
 	public void visit(Field field) {
 		throw new NotImplementedException();
 	}
@@ -136,5 +148,11 @@ public class SymbolTableBuildingPhase1 implements Visitor {
 	public void visit(Semicolon mock) {
 
 	}
+
+	public void visit(Modifiers modifiers) {
+		
+	}
+
+
 
 }

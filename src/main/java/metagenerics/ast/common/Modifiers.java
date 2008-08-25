@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import metagenerics.ast.Node;
+import metagenerics.ast.Visitor;
 
 public class Modifiers extends Node {
+
 	List<Modifier> modifiers = new ArrayList<Modifier>();
 
 	Annotations annotations = new Annotations();
@@ -44,4 +46,9 @@ public class Modifiers extends Node {
 		modifiers.add(Modifier.valueOf(arg.toUpperCase()));
 	}
 
+	@Override
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
+	
 }

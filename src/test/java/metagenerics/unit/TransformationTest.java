@@ -12,7 +12,6 @@ import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.symbol.PackageSymbol;
-import metagenerics.symbol.SymbolTable;
 import metagenerics.symbol.type.ClassSymbol;
 import metagenerics.symbol.type.MetaGenericSymbol;
 import metagenerics.symbol.type.MetaTypeDefSymbol;

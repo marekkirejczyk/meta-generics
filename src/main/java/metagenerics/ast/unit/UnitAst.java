@@ -66,4 +66,7 @@ public class UnitAst extends Node {
 		this.imports = imports;
 	}
 
+	public void addAllImports(List<ImportAst> imports) {
+		this.imports.addAll(imports);
+	}
 }

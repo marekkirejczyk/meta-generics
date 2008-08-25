@@ -6,14 +6,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import metagenerics.ast.declarations.Element;
+import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
 import metagenerics.exception.WrongPackageDeclaration;
+import metagenerics.symbol.Symbol;
 import metagenerics.transform.parse.PrettyPrinter;
 import metagenerics.visitors.MetaGenericBuilder;
 import metagenerics.visitors.SymbolTableBuilder;
@@ -35,14 +37,14 @@ public class MetaPreCompilerWalker {
 	Map<String, UnitAst> units;
 
 	void ensurePackageName(List<String> packagePath, String fileName) {
-		String [] filePathArray = fileName.split(File.separator);
-		List<String> filePath = new ArrayList<String>(); 
+		String[] filePathArray = fileName.split(File.separator);
+		List<String> filePath = new ArrayList<String>();
 		filePath.addAll(Arrays.asList(filePathArray));
 		CollectionUtils.removeLast(filePath);
 		if (filePath.get(0).equals(""))
 			CollectionUtils.removeFirst(filePath);
-		if (!filePath.equals(packagePath)) 		
-		  throw new WrongPackageDeclaration(packagePath, filePath);
+		if (!filePath.equals(packagePath))
+			throw new WrongPackageDeclaration(packagePath, filePath);
 	}
 
 	void checkPackages() {
@@ -85,10 +87,19 @@ public class MetaPreCompilerWalker {
 		this.precompiledCodeIntermediateFolder = precompiledCodeIntermediateFolder;
 	}
 
-	public void transformMetaTypedefs() {
+	void transformMetaTypedefs() {
 		TypedefBuilder builder = new TypedefBuilder();
 		for (UnitAst unit : units.values())
 			builder.visit(unit);
+	}
+
+	void transformImports() {
+		for (UnitAst unit : units.values())
+			for (Element element : unit.getElements().getElements())
+				if (element instanceof MetaGenericAst) {
+					MetaGenericAst metaGenericAst = (MetaGenericAst) element;
+					unit.addAllImports(metaGenericAst.getImports());					
+				}
 	}
 
 	public void saveIntermediateFiles() throws IOException {
@@ -121,8 +132,10 @@ public class MetaPreCompilerWalker {
 
 		parse();
 		buildSymbolTables();
+		transformImports();
 		transformMetaGenerics();
 		transformMetaTypedefs();
+
 		saveIntermediateFiles();
 	}
 

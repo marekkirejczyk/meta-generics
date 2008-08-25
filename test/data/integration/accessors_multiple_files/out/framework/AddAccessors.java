@@ -1,5 +1,11 @@
 package framework;
 
+import metagenerics.ast.*;
+import metagenerics.ast.declarations.*;
+import metagenerics.ast.member.*;
+import metagenerics.ast.common.*;
+
+
 public class AddAccessors extends metagenerics.runtime.MetaGeneric {
 	public metagenerics.ast.declarations.ClassDeclaration C;
 
@@ -18,16 +24,15 @@ public class AddAccessors extends metagenerics.runtime.MetaGeneric {
 			metagenerics.ast.metageneric.MetaTypedefAst typedef,
 			StringBuilder result) {
 		{
-			for (metagenerics.ast.Node e : C.getChildren())
-				evaluate(e);
+			evaluateAll(C.getChildren());
 
-			for (metagenerics.ast.member.Field m : C.getFields())
+			for (Field m : C.getFields())
 				if (m.hasAnnotation("Getter") || m.hasAnnotation("Accessors"))
 					evaluate("public %1$s get%2$s() {return %3$s;}", m.getType(),
 							util.StringUtils.capitalize(m.getName()), m
 									.getName());
 
-			for (metagenerics.ast.member.Field m : C.getFields())
+			for (Field m : C.getFields())
 				if (m.hasAnnotation("Setter") || m.hasAnnotation("Accessors"))
 					evaluate("public void set%2$s(%1$s arg) {%3$s = arg;}", m
 							.getType(), util.StringUtils

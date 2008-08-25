@@ -3,6 +3,7 @@ package metagenerics.transform.metatypedef;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
+import metagenerics.runtime.MetaGeneric;
 import metagenerics.symbol.Symbol;
 import metagenerics.symbol.SymbolTable;
 import metagenerics.symbol.type.MetaTypeDefSymbol;
@@ -17,8 +18,8 @@ public class TypedefTransform {
 		Symbol functionSymbol = metaTypedefSymbol.lookup(functionName);
 		MetaGenericAst metaGenericAst = (MetaGenericAst) functionSymbol
 				.getAstNode();
-		metagenerics.runtime.MetaGeneric metaGeneric = metaGenericAst
-				.getMetagenericInstance();
+		MetaGeneric metaGeneric = metaGenericAst.getMetagenericInstance();
+		
 		for (String parameter : typedef.getParameters()) {
 			Symbol classSymbol = metaTypedefSymbol.lookup(parameter);
 			ClassDeclaration cd = (ClassDeclaration) classSymbol.getAstNode();

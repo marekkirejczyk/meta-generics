@@ -1,12 +1,20 @@
 package metagenerics.ast.member;
 
-import metagenerics.ast.Node;
 import metagenerics.ast.common.Modifiers;
+import metagenerics.ast.declarations.Element;
 
-abstract public class Member extends Node {
+abstract public class Member extends Element {
 	Modifiers modifiers = new Modifiers();
 
 	String name;
+
+	protected Member(Member copy) {
+		setModifiers(copy.getModifiers());
+	}
+	
+	protected Member() {
+		
+	}
 
 	public Modifiers getModifiers() {
 		return modifiers;
