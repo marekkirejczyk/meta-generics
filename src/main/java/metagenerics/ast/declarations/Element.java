@@ -20,14 +20,12 @@ abstract public class Element extends Node {
 
 	protected Modifiers modifiers = new Modifiers();
 
-	
-	
 	protected Elements elements = new Elements();
-	
+
 	protected Members members = new Members();
 
 	protected List<Node> children = new ArrayList<Node>();
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -40,8 +38,6 @@ abstract public class Element extends Node {
 		return getModifiers().getAnnotations();
 	}
 
-	
-
 	public Modifiers getModifiers() {
 		return modifiers;
 	}
@@ -50,8 +46,8 @@ abstract public class Element extends Node {
 		this.modifiers = modifiers;
 	}
 
-	public boolean add(Element element) {
-		return elements.add(element);
+	public void add(Element element) {
+		elements.add(element);
 	}
 
 	public List<AnnotationDeclaration> getAnnotationsDeclarations() {
@@ -76,12 +72,12 @@ abstract public class Element extends Node {
 
 	public void setChildren(List<Node> children) {
 		this.children = children;
-		for (Node node: children)
+		for (Node node : children)
 			if (node instanceof VariableBuilder)
-				members.addAll((VariableBuilder)node);
-			else if (node instanceof Member) 
+				members.addAll((VariableBuilder) node);
+			else if (node instanceof Member)
 				members.add((Member) node);
-			else if (node instanceof Element) 
+			else if (node instanceof Element)
 				elements.add((Element) node);
 			else if (node instanceof Block)
 				members.add((Block) node);
@@ -92,6 +88,5 @@ abstract public class Element extends Node {
 	public List<Constructor> getConstructors() {
 		return members.getConstructors();
 	}
-	
-	
+
 }

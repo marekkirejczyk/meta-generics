@@ -9,8 +9,21 @@ import util.CollectionUtils;
 public class Elements extends Node {
 	protected List<Element> elements = new ArrayList<Element>();
 
-	public boolean add(Element element) {
-		return elements.add(element);
+	public Elements() {
+		
+	}
+
+	public Elements(Elements copy) {
+		elements.addAll(copy.elements);
+	}
+
+	
+	public void add(Element element) {
+		elements.add(element);
+	}
+
+	public void remove(Element element) {
+		elements.remove(element);
 	}
 
 	public List<ClassDeclaration> getClasses() {
@@ -34,4 +47,10 @@ public class Elements extends Node {
 		return elements;
 	}
 
+	@Override
+	public Elements clone() {
+		return new Elements(this);
+	}
+
+	
 }

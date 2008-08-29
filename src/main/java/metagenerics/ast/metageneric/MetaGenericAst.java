@@ -96,6 +96,7 @@ public class MetaGenericAst extends MetaDeclaration {
 		imports.add(new ImportAst("metagenerics.ast.declarations", true));
 		imports.add(new ImportAst("metagenerics.ast.member", true));
 		imports.add(new ImportAst("metagenerics.ast.common", true));
+		imports.add(new ImportAst("metagenerics.runtime", true));
 		return imports;
 	}
 

@@ -12,8 +12,15 @@ public class Node implements Visitable {
 	private String text;
 
 	private Symbol symbol;
-	
+
 	public Node() {
+	}
+
+	public Node(Node copy) {
+		start = copy.start;
+		stop = copy.stop;
+		symbol = copy.symbol;
+		text = copy.text;
 	}
 
 	public Node(String text) {
@@ -42,7 +49,7 @@ public class Node implements Visitable {
 		throw new NotImplementedException();
 	}
 
-	public void accept(Visitor visitor) {	
+	public void accept(Visitor visitor) {
 		System.err.println(this.getClass().getName());
 		System.out.println(getText());
 		throw new NotImplementedException();
@@ -56,5 +63,4 @@ public class Node implements Visitable {
 		this.symbol = symbol;
 	}
 
-	
 }

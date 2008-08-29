@@ -5,6 +5,7 @@ import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
+import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
@@ -21,6 +22,9 @@ import metagenerics.ast.unit.UnitAst;
 import metagenerics.symbol.PackageSymbol;
 import metagenerics.symbol.Symbol;
 import metagenerics.symbol.UnitSymbol;
+import metagenerics.symbol.type.ClassSymbol;
+import metagenerics.symbol.type.MetaGenericSymbol;
+import metagenerics.symbol.type.MetaTypeDefSymbol;
 import metagenerics.symbol.type.Type;
 
 public class SymbolTableBuildingPhase2 implements Visitor {
@@ -41,7 +45,8 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 		currentUnit = (UnitSymbol) unit.getSymbol();
 		for (ImportAst anImport : unit.getImports())
 			anImport.accept(this);
-
+		for (Element element : unit.getElements().getElements())
+			element.accept(this);
 	}
 
 	public void visit(PackageDeclaration unitAst) {
@@ -53,11 +58,10 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 
 		Symbol symbol = rootPackage.localLookup(importAst.getPath());
 		if (symbol == null) {
-			System.err.println("Import not resolved: "
-					+ importAst.getPath());
+			System.err.println("Import not resolved: " + importAst.getPath());
 			return;
 		} else if (importAst.isStatic()) {
-			//TODO
+			// TODO
 		} else {
 			if (importAst.isGeneral() && symbol instanceof PackageSymbol)
 				currentUnit.addPackageImport((PackageSymbol) symbol);
@@ -91,12 +95,20 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 
 	public void visit(MetaGenericAst klass) {
 		// TODO Auto-generated method stub
-
 	}
 
-	public void visit(MetaTypedefAst element) {
-		// TODO Auto-generated method stub
+	public void visit(MetaTypedefAst typedef) {
+		String functionName = typedef.getFunction();
+		MetaTypeDefSymbol metaTypeDefSymbol = typedef.getSymbol();
+		MetaGenericSymbol metaGenericSymbol = (MetaGenericSymbol) metaTypeDefSymbol
+				.lookup(functionName);
+		metaTypeDefSymbol.setFunction(metaGenericSymbol);
 
+		for (String parameter : typedef.getParameters()) {
+			ClassSymbol classSymbol = (ClassSymbol) metaTypeDefSymbol
+					.lookup(parameter);
+			metaTypeDefSymbol.getArguments().add(classSymbol);
+		}
 	}
 
 	public void visit(VariableBuilder vb) {

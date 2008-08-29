@@ -2,6 +2,7 @@ import metagenerics.ast.*;
 import metagenerics.ast.declarations.*;
 import metagenerics.ast.member.*;
 import metagenerics.ast.common.*;
+import metagenerics.runtime.*;
 
 @interface Getter {
 }
@@ -16,6 +17,7 @@ class Adress {
 	String street;
 
 	int houseNo;
+	
 }
 
 class PersonStub {

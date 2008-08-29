@@ -1,14 +1,9 @@
-package metagenerics.visitors;
+package metagenerics.ast;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import metagenerics.ast.Visitor;
 import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
-import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
 import metagenerics.ast.member.Block;
@@ -22,33 +17,15 @@ import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.ImportAst;
 import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
-import metagenerics.symbol.type.MetaTypeDefSymbol;
-import metagenerics.transform.metatypedef.TypedefTransform;
 import metagenerics.exception.NotImplementedException;
 
-public class TypedefBuilder implements Visitor {
+public class VisitorBase implements Visitor {
 
 	public void visit(UnitAst unit) {
-		for (Element element : unit.getElements().getElements())
-			element.accept(this);
-
-		List<Element> removeList = new ArrayList<Element>();
-
-		for (Element element : unit.getElements().getElements()) {
-			if (element instanceof ClassDeclaration) {
-				ClassDeclaration cd = (ClassDeclaration) element;
-				boolean notNull = cd.getAnnotations() != null;
-
-				if (notNull
-						&& cd.getAnnotations().containsAnnotation("Disappear")) {
-					removeList.add(cd);
-				}
-			}
-		}
-		unit.getElements().getElements().removeAll(removeList);
+		throw new NotImplementedException();
 	}
 
-	public void visit(PackageDeclaration packageAst) {
+	public void visit(PackageDeclaration unitAst) {
 		throw new NotImplementedException();
 	}
 
@@ -56,34 +33,39 @@ public class TypedefBuilder implements Visitor {
 		throw new NotImplementedException();
 	}
 
-	public void visit(ClassDeclaration klass) {
-
-	}
-
-	public void visit(EnumDeclaration klass) {
-
-	}
-
-	public void visit(Interface klass) {
+	public void visit(ClassDeclaration classAst) {
 		throw new NotImplementedException();
 	}
 
-	public void visit(MetaGenericAst metaGeneric) {
-
+	public void visit(Interface interfaceAst) {
+		throw new NotImplementedException();
 	}
 
-	public void visit(MetaTypedefAst typedef) {
-		StringBuilder result = new StringBuilder();
-		TypedefTransform transform = new TypedefTransform();
-		transform.transform(typedef, result);
-		typedef.setTextAfterTransformation(result.toString());
+	public void visit(EnumDeclaration klass) {
+		throw new NotImplementedException();
 	}
 
 	public void visit(AnnotationDeclaration klass) {
+		throw new NotImplementedException();
+	}
 
+	public void visit(MetaGenericAst klass) {
+		throw new NotImplementedException();
+	}
+
+	public void visit(MetaTypedefAst element) {
+		throw new NotImplementedException();
 	}
 
 	public void visit(VariableBuilder vb) {
+		throw new NotImplementedException();
+	}
+
+	public void visit(Method method) {
+		throw new NotImplementedException();
+	}
+
+	public void visit(Constructor constructor) {
 		throw new NotImplementedException();
 	}
 
@@ -100,13 +82,6 @@ public class TypedefBuilder implements Visitor {
 	}
 
 	public void visit(Semicolon mock) {
-	}
-
-	public void visit(Method method) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(Constructor constructor) {
 		throw new NotImplementedException();
 	}
 

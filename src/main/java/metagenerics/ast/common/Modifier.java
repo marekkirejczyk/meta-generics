@@ -12,7 +12,8 @@ public enum Modifier {
     INTERFACE,
     NATIVE,
     SYNCHRONIZED,
-    VOLATILE;
+    VOLATILE,
+    META;
 
     public static Modifier fromText(String value) {
 		return Modifier.valueOf(value.toUpperCase());

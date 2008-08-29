@@ -8,12 +8,22 @@ abstract public class Member extends Element {
 
 	String name;
 
+	boolean isMeta = false;
+
+	public boolean isMeta() {
+		return isMeta;
+	}
+
+	public void setMeta(boolean isMeta) {
+		this.isMeta = isMeta;
+	}
+
 	protected Member(Member copy) {
 		setModifiers(copy.getModifiers());
 	}
-	
+
 	protected Member() {
-		
+
 	}
 
 	public Modifiers getModifiers() {

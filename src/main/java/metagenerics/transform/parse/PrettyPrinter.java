@@ -1,9 +1,13 @@
 package metagenerics.transform.parse;
 
+import static util.StringUtils.formatCollection;
+
 import java.io.IOException;
 
 import metagenerics.ast.Node;
 import metagenerics.ast.Visitor;
+import metagenerics.ast.common.Annotation;
+import metagenerics.ast.common.Annotations;
 import metagenerics.ast.common.Modifiers;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
@@ -23,8 +27,6 @@ import metagenerics.ast.unit.ImportAst;
 import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
-import util.CollectionUtils;
-import util.StringUtils;
 
 public class PrettyPrinter implements Visitor {
 
@@ -45,6 +47,23 @@ public class PrettyPrinter implements Visitor {
 		}
 	}
 
+	int indentLevel = 0;
+
+	private void incrementIndentLevel() {
+		indentLevel++;
+	}
+
+	private void decrementIndentLevel() {
+		indentLevel--;
+	}
+
+	
+	private void appendWithIndent(String text) {
+		for (int i = 0; i < indentLevel; i++)
+			append("  ");
+		append(text);
+	}
+
 	public Appendable getAppendable() {
 		return appendable;
 	}
@@ -53,11 +72,20 @@ public class PrettyPrinter implements Visitor {
 		this.appendable = appendable;
 	}
 
+	public void visit(Annotations annotations) {
+		if (annotations.getAnnotations().size() == 0)
+			return;
+		for (Annotation a: annotations.getAnnotations())
+			appendWithIndent(a.getText() + "\n");
+	}
+	
 	public void visit(UnitAst unit) {
-		append(unit.getAnnotations().getText() + "\n");
+		visit(unit.getAnnotations());
 		unit.getPackageDeclaration().accept(this);
+		append("\n");
 		for (ImportAst anImport : unit.getImports())
 			anImport.accept(this);
+		append("\n");
 		for (Element element : unit.getElements().getElements())
 			element.accept(this);
 	}
@@ -69,8 +97,8 @@ public class PrettyPrinter implements Visitor {
 	public void visit(ImportAst importAst) {
 		append("import ");
 		if (importAst.isStatic())
-			append(" static ");
-		append(StringUtils.formatCollection(importAst.getIdentifiers(), "."));
+			append("static ");
+		append(formatCollection(importAst.getIdentifiers(), "."));
 		if (importAst.isGeneral())
 			append(".*");
 		append(";\n");
@@ -78,22 +106,24 @@ public class PrettyPrinter implements Visitor {
 
 	public void visit(ClassDeclaration klass) {
 		klass.getModifiers().accept(this);
-		append(" " + "class " + klass.getName());
+		appendWithIndent("class " + klass.getName());
 		if (klass.getGenericParameters() != null)
 			append("<"
-					+ StringUtils.formatCollection(
+					+ formatCollection(
 							klass.getGenericParameters(), ", ") + ">");
 
 		if (klass.getSuperClass() != null)
 			append(" extends " + klass.getSuperClass());
 		if (klass.getImplementedInterfaces() != null)
 			append(" implements "
-					+ StringUtils.formatCollection(klass
+					+ formatCollection(klass
 							.getImplementedInterfaces(), ", "));
-		append("{");
+		appendWithIndent("{\n");
+		incrementIndentLevel();
 		for (Node node : klass.getChildren())
 			node.accept(this);
-		append("}");
+		decrementIndentLevel();
+		appendWithIndent("}\n");
 	}
 
 	public void visit(Interface klass) {
@@ -120,14 +150,14 @@ public class PrettyPrinter implements Visitor {
 				+ klass.getName());
 		if (klass.getGenericParameters() != null)
 			append("<"
-					+ StringUtils.formatCollection(
+					+ formatCollection(
 							klass.getGenericParameters(), ", ") + ">");
 
 		if (klass.getSuperClass() != null)
 			append(" extends " + klass.getSuperClass());
 		if (klass.getImplementedInterfaces() != null)
 			append(" implements "
-					+ StringUtils.formatCollection(klass
+					+ formatCollection(klass
 							.getImplementedInterfaces(), ", "));
 
 		append(" {\n");
@@ -142,7 +172,7 @@ public class PrettyPrinter implements Visitor {
 	}
 
 	public void visit(VariableBuilder vb) {
-		append(vb.getText());
+		appendWithIndent(vb.getText() + "\n\n");
 		/*
 		 * append(vb.getAnnotations().getText() + "\n");
 		 * append(vb.getModifiers().getText() + " "); append(vb.getType() + "
@@ -156,15 +186,16 @@ public class PrettyPrinter implements Visitor {
 	}
 
 	public void visit(Method method) {
+		appendWithIndent("");
 		method.getModifiers().accept(this);
 		if (method.getGenericParameters() != null) {
 			append("<");
-			append(CollectionUtils.toString(method.getGenericParameters(), ","));
+			append(formatCollection(method.getGenericParameters(), ","));
 			append("> ");
 		}
 		append(method.getType());
 		append(" " + method.getName());
-		append(method.getRest());
+		append(method.getRest() + "\n\n");
 
 	}
 
@@ -172,7 +203,7 @@ public class PrettyPrinter implements Visitor {
 		constructor.getModifiers().accept(this);
 		if (constructor.getGenericParameters() != null) {
 			append("<");
-			append(CollectionUtils.toString(constructor.getGenericParameters(),
+			append(formatCollection(constructor.getGenericParameters(),
 					","));
 			append("> ");
 		}

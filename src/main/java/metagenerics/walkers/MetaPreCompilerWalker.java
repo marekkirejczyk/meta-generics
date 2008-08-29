@@ -1,28 +1,18 @@
 package metagenerics.walkers;
 
-import java.io.File;
-import java.io.FileWriter;
+import static util.FolderUtils.ensureFolderExist;
+
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import metagenerics.ast.declarations.Element;
-import metagenerics.ast.metageneric.MetaGenericAst;
-import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
-import metagenerics.exception.WrongPackageDeclaration;
-import metagenerics.symbol.Symbol;
-import metagenerics.transform.parse.PrettyPrinter;
 import metagenerics.visitors.MetaGenericBuilder;
+import metagenerics.visitors.MetaGenericCompilerBuilder;
 import metagenerics.visitors.SymbolTableBuilder;
 import metagenerics.visitors.TypedefBuilder;
-import util.CollectionUtils;
-import util.FolderUtils;
-import util.PathUtils;
 
 public class MetaPreCompilerWalker {
 
@@ -36,45 +26,18 @@ public class MetaPreCompilerWalker {
 
 	Map<String, UnitAst> units;
 
-	void ensurePackageName(List<String> packagePath, String fileName) {
-		String[] filePathArray = fileName.split(File.separator);
-		List<String> filePath = new ArrayList<String>();
-		filePath.addAll(Arrays.asList(filePathArray));
-		CollectionUtils.removeLast(filePath);
-		if (filePath.get(0).equals(""))
-			CollectionUtils.removeFirst(filePath);
-		if (!filePath.equals(packagePath))
-			throw new WrongPackageDeclaration(packagePath, filePath);
-	}
-
-	void checkPackages() {
-		for (Map.Entry<String, UnitAst> entry : units.entrySet()) {
-			String filename = entry.getKey();
-			PackageDeclaration packageAst = entry.getValue()
-					.getPackageDeclaration();
-			List<String> path = packageAst.getPackagePath();
-			ensurePackageName(path, filename);
-		}
-	}
-
-	public void parse() {
-		ParseWalker walker = new ParseWalker();
-		for (String sourceFolder : sourceFolders)
-			walker.parseFolder(sourceFolder);
-		units = walker.getUnitsWithNames();
-		checkPackages();
-	}
-
 	public void buildSymbolTables() {
 		SymbolTableBuilder builder = new SymbolTableBuilder();
 		builder.build(units.values());
 	}
 
-	public void transformMetaGenerics() {
-		MetaGenericBuilder builder = new MetaGenericBuilder();
-		builder.setIntermediateFolder(getMetaGenericsIntermediateFolder());
-		for (UnitAst unit : units.values())
-			builder.visit(unit);
+	public void transformMetaGenerics() throws IOException {
+		String folder = getMetaGenericsIntermediateFolder();
+		Map<String, UnitAst> copy = new MetaGenericBuilder().build(units);
+		AstForestSaver.save(folder, copy);
+
+		new JavaCompilerWalker(folder, folder).compile();
+		new MetaGenericCompilerBuilder(folder).build(units);
 	}
 
 	public void setMetaGenericsIntermediateFolder(
@@ -94,34 +57,15 @@ public class MetaPreCompilerWalker {
 	}
 
 	void transformImports() {
-		for (UnitAst unit : units.values())
-			for (Element element : unit.getElements().getElements())
-				if (element instanceof MetaGenericAst) {
-					MetaGenericAst metaGenericAst = (MetaGenericAst) element;
-					unit.addAllImports(metaGenericAst.getImports());					
-				}
-	}
-
-	public void saveIntermediateFiles() throws IOException {
-		PrettyPrinter printer = new PrettyPrinter();
-
-		for (String filename : units.keySet()) {
-			String fullName = getPrecompiledCodeIntermediateFolder() + filename;
-			FolderUtils.ensureFolderExist(PathUtils.stripFileName(fullName));
-			FileWriter writer = new FileWriter(fullName);
-			printer.setAppendable(writer);
-			printer.visit(units.get(filename));
-			writer.close();
-		}
+		new ImportsWalker(units).transformImports();
 	}
 
 	public void ensureFoldersExists() {
 		try {
 			if (getIntermediateFolder() != null)
-				FolderUtils.ensureFolderExist(getIntermediateFolder());
-			FolderUtils.ensureFolderExist(getMetaGenericsIntermediateFolder());
-			FolderUtils
-					.ensureFolderExist(getPrecompiledCodeIntermediateFolder());
+				ensureFolderExist(getIntermediateFolder());
+			ensureFolderExist(getMetaGenericsIntermediateFolder());
+			ensureFolderExist(getPrecompiledCodeIntermediateFolder());
 		} catch (IOException e) {
 			throw new CompileException(e);
 		}
@@ -129,14 +73,13 @@ public class MetaPreCompilerWalker {
 
 	public void compile() throws IOException {
 		ensureFoldersExists();
-
-		parse();
+		units = ParseWalker.parseFolders(sourceFolders);
+		PackageDeclarationsChecker.check(units);
 		buildSymbolTables();
 		transformImports();
 		transformMetaGenerics();
 		transformMetaTypedefs();
-
-		saveIntermediateFiles();
+		AstForestSaver.save(getPrecompiledCodeIntermediateFolder(), units);
 	}
 
 	public String getIntermediateFolder() {

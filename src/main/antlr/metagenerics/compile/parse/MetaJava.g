@@ -86,6 +86,7 @@ options {k=2; backtrack=true; memoize=true;}
 
 @lexer::header {package metagenerics.compile.parse;} 
 
+
 @parser::header {
 package metagenerics.compile.parse; 
 import metagenerics.ast.metageneric.*;
@@ -177,8 +178,7 @@ metaGeneric returns [MetaGenericAst value = new MetaGenericAst();]
 			$value.setChildren($classBody.value);
 			$value.setModifiers($m0.value);
         }
-		
-	;
+;
 	
 
 	
@@ -318,6 +318,8 @@ classBodyDeclaration returns [List<Node> value = new ArrayList<Node>();]
 			((Element)$memberDecl.value).setModifiers($modifiers.value);
 			$memberDecl.value.setInfo($start, $stop, $text);
 			$value.add($memberDecl.value);
+			
+				
 		}
 	;
 	
