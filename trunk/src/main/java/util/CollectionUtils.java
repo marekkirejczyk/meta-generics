@@ -16,10 +16,12 @@ public class CollectionUtils {
 		return Collections.unmodifiableList(result);
 	}
 
+	@Deprecated
 	public static <T> String toString(Collection<T> collection, String separator) {
 		return CollectionUtils.toString(collection, separator, "", "");
 	}
 
+	@Deprecated
 	public static <T> String toString(Collection<T> collection,
 			String separator, String begin, String end) {
 		StringBuilder result = new StringBuilder();

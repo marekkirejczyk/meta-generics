@@ -65,9 +65,10 @@ public class TransformationTest {
 				.toString());
 	}
 
-	public metagenerics.runtime.MetaGeneric firstMetaGenericInFile(String filename)
-			throws IOException, ClassNotFoundException, InstantiationException,
-			IllegalAccessException, RecognitionException {
+	public metagenerics.runtime.MetaGeneric firstMetaGenericInFile(
+			String filename) throws IOException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException,
+			RecognitionException {
 
 		MetaGenericAst metaGenericAst = TestHelper.firstASTInFile(
 				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
@@ -89,8 +90,8 @@ public class TransformationTest {
 
 		ClassDeclaration stub = TestHelper.firstASTInFile(
 				ClassDeclaration.class, STUB_IN_FILE_NAME);
-		MetaTypedefAst typedef = TestHelper.firstASTInFile(MetaTypedefAst.class,
-				META_TYPEDEF_IN_FILE_NAME);
+		MetaTypedefAst typedef = TestHelper.firstASTInFile(
+				MetaTypedefAst.class, META_TYPEDEF_IN_FILE_NAME);
 		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_INTERMEDIATE_FILE_NAME);
 
 		generic.setArgument(1, stub);
@@ -107,23 +108,25 @@ public class TransformationTest {
 		StringBuilder result = new StringBuilder();
 		TypedefTransform transform = new TypedefTransform();
 		PackageSymbol rootPackage = new PackageSymbol("");
-		
-		
-		MetaTypedefAst typedef = TestHelper.firstASTInFile(MetaTypedefAst.class,
-				META_TYPEDEF_IN_FILE_NAME);
+
+		MetaTypedefAst typedef = TestHelper.firstASTInFile(
+				MetaTypedefAst.class, META_TYPEDEF_IN_FILE_NAME);
 		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_IN_FILE_NAME);
-		MetaGenericAst genericAst = TestHelper.firstASTInFile(MetaGenericAst.class,
-				GENERIC_IN_FILE_NAME);
+		MetaGenericAst genericAst = TestHelper.firstASTInFile(
+				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
 		ClassDeclaration stub = TestHelper.firstASTInFile(
 				ClassDeclaration.class, STUB_IN_FILE_NAME);
 
 		genericAst.setMetagenericInstance(generic);
 		MetaTypeDefSymbol metaTypeDefSymbol = new MetaTypeDefSymbol(typedef);
+		MetaGenericSymbol metaGenericSymbol = new MetaGenericSymbol(genericAst);
 		metaTypeDefSymbol.setParent(rootPackage);
+		metaGenericSymbol.setParent(rootPackage);
 		rootPackage.add(new ClassSymbol(stub));
-		rootPackage.add(new MetaGenericSymbol(genericAst));
-		transform.setMetaTypedefSymbol(metaTypeDefSymbol);
-
+		rootPackage.add(metaGenericSymbol);
+		metaTypeDefSymbol.setFunction(metaGenericSymbol);
+		typedef.setSymbol(metaTypeDefSymbol);
+		metaTypeDefSymbol.getArguments().add(new ClassSymbol(stub));
 		transform.transform(typedef, result);
 
 		assertEqualsFileAndStringTokens(TYPEDEF_OUT_FILE_NAME, result
@@ -135,10 +138,11 @@ public class TransformationTest {
 			RecognitionException, InstantiationException,
 			IllegalAccessException {
 		MetaGenericCompiler compiler = new MetaGenericCompiler();
-		MetaGenericAst metaGeneric = TestHelper.firstASTInFile(MetaGenericAst.class,
-				GENERIC_IN_FILE_NAME);
+		MetaGenericAst metaGeneric = TestHelper.firstASTInFile(
+				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
 		compiler.setIntermediateFolder(INTERMEDIATE_FOLDER);
-		metagenerics.runtime.MetaGeneric genericClass = compiler.compile(metaGeneric);
+		metagenerics.runtime.MetaGeneric genericClass = compiler
+				.compile(metaGeneric);
 		Assert.assertNotNull(genericClass);
 	}
 }

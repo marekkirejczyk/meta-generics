@@ -5,6 +5,8 @@ import java.util.List;
 
 import metagenerics.ast.Visitor;
 import metagenerics.ast.unit.ImportAst;
+import metagenerics.symbol.Symbol;
+import metagenerics.symbol.type.MetaTypeDefSymbol;
 
 public class MetaTypedefAst extends MetaDeclaration {
 
@@ -66,5 +68,11 @@ public class MetaTypedefAst extends MetaDeclaration {
 	public String getTextAfterTransformation() {
 		return textAfterTransformation;
 	}
+
+	@Override
+	public MetaTypeDefSymbol getSymbol() {
+		return (MetaTypeDefSymbol)super.getSymbol();
+	}
+	
 
 }

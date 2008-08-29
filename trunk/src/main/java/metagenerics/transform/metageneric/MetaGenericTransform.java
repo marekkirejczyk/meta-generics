@@ -1,17 +1,21 @@
 package metagenerics.transform.metageneric;
 
-import util.StringUtils;
 import metagenerics.ast.Node;
+import metagenerics.ast.common.Modifiers;
+import metagenerics.ast.declarations.Element;
 import metagenerics.ast.member.Block;
 import metagenerics.ast.metageneric.MetaGenericAst;
+import metagenerics.transform.parse.PrettyPrinter;
+import util.StringUtils;
 
 public class MetaGenericTransform {
+
 	final static String classAstType = "metagenerics.ast.declarations.ClassDeclaration";
 
 	final static String metaTypedefAstType = "metagenerics.ast.metageneric.MetaTypedefAst";
 
 	final static String metaGenericAstType = "metagenerics.runtime.MetaGeneric";
-	
+
 	boolean useOriginalModifiers = true;
 
 	public boolean isUseOriginalModifiers() {
@@ -22,19 +26,30 @@ public class MetaGenericTransform {
 		this.useOriginalModifiers = useOriginalModifiers;
 	}
 
-	public void transform(MetaGenericAst metaGeneric, StringBuilder result) {
+	protected void generateModifiers(MetaGenericAst metaGeneric,
+			StringBuilder result) {
 		if (useOriginalModifiers)
 			result.append(metaGeneric.getModifiers().getText());
 		else
 			result.append("public");
+	}
 
-		result.append(" class " + metaGeneric.getName()
-				+ " extends " + metaGenericAstType + " {\n");
+	MetaGenericAst metaGeneric;
+
+	StringBuilder result;
+
+	protected void appendBlock(Block block) {
+		if (block.getType() == Block.Type.META)
+			result.append(block.getInstructionBlock().getText());
+	}
+
+	protected void generateParameters(MetaGenericAst metaGeneric,
+			StringBuilder result) {
 		int i = 1;
+
 		for (String arg : metaGeneric.getGenericParameters())
 			result.append(String.format("\tpublic %1$s %2$s;\n", classAstType,
 					arg));
-
 		result.append("\n\tpublic void setArgument(int i, " + classAstType
 				+ " arg) {\n");
 		result.append("\t\tswitch (i) {\n");
@@ -47,22 +62,57 @@ public class MetaGenericTransform {
 				.append("\t\t\tdefault: throw new metagenerics.exception.UnexpectedArgumentIndexException(i);\n");
 		result.append("\t\t}\n\t}\n");
 
-		result
-				.append("\n\tprotected void translateMetaGenerics(" + metaTypedefAstType +" typedef, StringBuilder result) { \n");
+	}
+
+	boolean isMetaElement(Node node) {
+		if (!(node instanceof Element))
+			return false;
+		Element element = (Element) node;
+		Modifiers modififers = element.getModifiers();
+		return modififers.containsAnnotation("Meta");
+	}
+
+	void appendElement(Node node) {
+		String text = node.getText().replaceAll("\n", "");
+		text = StringUtils.escapeCharacters(text);
+		result.append("evaluate(\"" + text + "\");");
+	}
+
+	void appendMetaElement(Element element) {
+		element.accept(new PrettyPrinter(result));
+	}
+
+	void appendMetaElements() {
+		for (Node node : metaGeneric.getChildren())
+			if (isMetaElement(node))
+				appendMetaElement((Element)node);
+	}
+	
+	void appendElements() {
+		result.append("\n\tprotected void translateMetaGenerics("
+				+ metaTypedefAstType + " typedef, StringBuilder result) { \n");
 
 		for (Node node : metaGeneric.getChildren())
-			if (node instanceof Block) {
-				Block block = (Block) node;
-				if (block.getType() == Block.Type.META)
-					result.append(block.getInstructionBlock().getText());
-			} else {
-				String text = node.getText().replaceAll("\n", "");
-				text = StringUtils.escapeCharacters(text);
-				result.append("evaluate(\""
-						+ text + "\");");
-			}
+			if (node instanceof Block)
+				appendBlock((Block) node);
+			else if (!(isMetaElement(node)))
+				appendElement(node);
 
-		result.append("\n } }\n");
+		result.append("\t}\n");		
+	}
 
+	public void transform(MetaGenericAst metaGeneric, StringBuilder result) {
+		this.metaGeneric = metaGeneric;
+		this.result = result;
+
+		generateModifiers(metaGeneric, result);
+
+		result.append(" class " + metaGeneric.getName() + " extends "
+				+ metaGenericAstType + " {\n");
+
+		generateParameters(metaGeneric, result);
+		appendMetaElements();
+		appendElements();
+		result.append("}\n");
 	}
 }

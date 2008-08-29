@@ -2,6 +2,7 @@ package model;
 
 import framework.*;
 import stub.PersonStub;
+import static util.StringUtils.capitalize;
 
 public class Person
 {

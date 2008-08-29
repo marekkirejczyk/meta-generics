@@ -14,6 +14,14 @@ public class Annotations extends Node implements Iterable<Annotation> {
 		return annotations.add(arg0);
 	}
 
+	public List<Annotation> getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(List<Annotation> annotations) {
+		this.annotations = annotations;
+	}
+
 	public Iterator<Annotation> iterator() {
 		return annotations.iterator();
 	}

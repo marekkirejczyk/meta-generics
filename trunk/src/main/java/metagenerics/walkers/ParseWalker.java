@@ -64,5 +64,12 @@ public class ParseWalker {
 		for (File file : folder.listFiles())
 			visit(file.getPath());
 	}
+	
+	static public Map<String, UnitAst> parseFolders(Collection<String> sourceFolders) {
+		ParseWalker walker = new ParseWalker();
+		for (String sourceFolder : sourceFolders)
+			walker.parseFolder(sourceFolder);
+		return walker.getUnitsWithNames();
+	}
 
 }

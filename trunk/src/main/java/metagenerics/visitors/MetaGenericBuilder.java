@@ -1,90 +1,32 @@
 package metagenerics.visitors;
 
-import metagenerics.ast.Visitor;
-import metagenerics.ast.common.Modifiers;
-import metagenerics.ast.common.Semicolon;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+
+import metagenerics.ast.VisitorBase;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
-import metagenerics.ast.member.Block;
-import metagenerics.ast.member.Constructor;
-import metagenerics.ast.member.Field;
-import metagenerics.ast.member.MemberMock;
-import metagenerics.ast.member.Method;
-import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
-import metagenerics.ast.unit.ImportAst;
-import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.transform.metageneric.MetaGenericCompiler;
 import metagenerics.transform.metageneric.MetaGenericTransform;
-import metagenerics.exception.NotImplementedException;
 
-public class MetaGenericBuilder implements Visitor {
+
+public class MetaGenericBuilder extends VisitorBase {
 
 	MetaGenericCompiler compiler = new MetaGenericCompiler();
 
 	MetaGenericTransform transfom = new MetaGenericTransform();
 
 	UnitAst currentUnit;
-	
-	public void visit(UnitAst unit) {
-		currentUnit = unit;
-		for (Element element : unit.getElements().getElements())
-			if (!(element instanceof Semicolon))
-				element.accept(this);
-	}
 
-	public void visit(PackageDeclaration unit) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(ImportAst importAst) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(ClassDeclaration klass) {
-
-	}
-
-	public void visit(EnumDeclaration klass) {
-
-	}
-
-	public void visit(Interface klass) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(MetaGenericAst metaGenericAst) {
-		StringBuilder result = new StringBuilder();
-		transfom.transform(metaGenericAst, result);
-		metaGenericAst.setTextAfterTransformation(result.toString());
-		metaGenericAst.getStandardImports().addAll(currentUnit.getImports());
-		metaGenericAst.setMetagenericInstance(compiler.compile(metaGenericAst));
-	}
-
-	public void visit(MetaTypedefAst element) {
-
-	}
-
-	public void visit(AnnotationDeclaration klass) {
-
-	}
-
-	public void visit(VariableBuilder vb) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(Field field) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(Block block) {
-		throw new NotImplementedException();
-	}
+	private boolean removeFlag = false;
 
 	public String getIntermediateFolder() {
 		return compiler.getIntermediateFolder();
@@ -94,24 +36,75 @@ public class MetaGenericBuilder implements Visitor {
 		compiler.setIntermediateFolder(intermediateFolder);
 	}
 
-	public void visit(MemberMock mock) {
-		throw new NotImplementedException();
+	public Map<String, UnitAst> build(Map<String, UnitAst> units) {
+		Map<String, UnitAst> copy = new TreeMap<String, UnitAst>();
+		for (Map.Entry<String, UnitAst> entry : units.entrySet()) {
+			UnitAst clone = entry.getValue().clone();
+			copy.put(entry.getKey(), clone);
+			clone.accept(this);
+		}
+		return copy;
 	}
 
-	public void visit(Semicolon mock) {
-		throw new NotImplementedException();
+	public void visit(UnitAst unit) {
+		currentUnit = unit;
+		Iterator<Element> i = unit.getElements().getElements().iterator();
+		while (i.hasNext()) {
+			i.next().accept(this);
+			if (removeFlag) {
+				i.remove();
+				removeFlag = false;
+			}
+		}
 	}
 
-	public void visit(Method method) {
-		throw new NotImplementedException();
+	@Override
+	public void visit(AnnotationDeclaration annotation) {
+		removeFlag = true;
 	}
 
-	public void visit(Constructor constructor) {
-		throw new NotImplementedException();
+	@Override
+	public void visit(ClassDeclaration classAst) {
+		removeFlag = true;
 	}
 
-	public void visit(Modifiers modifiers) {
-		throw new NotImplementedException();
+	@Override
+	public void visit(EnumDeclaration klass) {
+		removeFlag = true;
+	}
+
+	@Override
+	public void visit(Interface interfaceAst) {
+		removeFlag = true;
+	}
+
+	@Override
+	public void visit(MetaGenericAst metaGenericAst) {
+		StringBuilder result = new StringBuilder();
+		transfom.transform(metaGenericAst, result);
+		metaGenericAst.setTextAfterTransformation(result.toString());
+		MetaGenericAst.getStandardImports().addAll(currentUnit.getImports());
+	}
+
+	@Override
+	public void visit(MetaTypedefAst element) {
+		removeFlag = true;
+	}
+
+	public void visitUnit(UnitAst unit) {
+		currentUnit = unit;
+		Collection<MetaGenericAst> elements;
+		elements = unit.getElementsByClass(MetaGenericAst.class);
+		for (Element element : elements)
+			element.accept(this);
+	}
+
+	public void visitMetaGeneric(MetaGenericAst metaGenericAst) {
+		StringBuilder result = new StringBuilder();
+		transfom.transform(metaGenericAst, result);
+		metaGenericAst.setTextAfterTransformation(result.toString());
+		MetaGenericAst.getStandardImports().addAll(currentUnit.getImports());
+		metaGenericAst.setMetagenericInstance(compiler.compile(metaGenericAst));
 	}
 
 }

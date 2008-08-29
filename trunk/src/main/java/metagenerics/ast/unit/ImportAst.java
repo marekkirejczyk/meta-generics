@@ -17,15 +17,15 @@ public class ImportAst extends Node {
 	boolean isGeneral = false;
 
 	public ImportAst() {
-		
+
 	}
 
 	public ImportAst(String path, boolean isGeneral) {
-		for (String element: path.split("\\."))
+		for (String element : path.split("\\."))
 			addIdentifier(element);
 		this.isGeneral = isGeneral;
 	}
-	
+
 	public boolean isGeneral() {
 		return isGeneral;
 	}
@@ -57,6 +57,14 @@ public class ImportAst extends Node {
 
 	public String getPath() {
 		return StringUtils.formatCollection(identifiers, ".");
-	}	
-	
+	}
+
+	public boolean equals(ImportAst importAst) {
+		boolean areStaticsEquals = isStatic() == importAst.isStatic();
+		boolean areGeneralEquals = isGeneral() == importAst.isGeneral();
+		boolean arePathEquals = getPath().equals(importAst.getPath());
+		return areStaticsEquals && areGeneralEquals && arePathEquals;
+
+	}
+
 }

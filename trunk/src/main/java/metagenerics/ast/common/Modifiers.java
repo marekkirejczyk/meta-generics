@@ -42,6 +42,11 @@ public class Modifiers extends Node {
 		modifiers.add(arg);
 	}
 
+	public void removeModifier(Modifier arg) {
+		modifiers.remove(arg);
+	}
+
+	
 	public void add(String arg) {
 		modifiers.add(Modifier.valueOf(arg.toUpperCase()));
 	}
@@ -49,6 +54,10 @@ public class Modifiers extends Node {
 	@Override
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
+	}
+
+	public boolean containsModifier(Modifier modifier) {
+		return modifiers.contains(modifier);
 	}
 	
 }
