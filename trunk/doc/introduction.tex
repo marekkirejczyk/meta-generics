@@ -1,0 +1,59 @@
+\chapter{Introduction}
+\section{Motivation}
+\subsection{Encapsulating and extracting}
+
+
+Good programming practice is to extract and encapsulate frequently used parts of code.
+
+Extracting is removing pieces of a code and putting into a separate ``box'' that can be used many times.
+In other words extracting is making code reusable\footnote{According to MSDN ``Reusable code is code that can be used, without modification, to perform a specific service regardless of what application uses the code.''}.
+``Extracted box'' may be a method, a class or a library. Depending on programming language it may be something else, 
+for example in functional languages like OCaml it may be a module.
+When talking about extracting, one might think about refactoring \cite{fowler06}. Two well known refactoring operations are \emph{extract method} and \emph{extract class}. It is possible to extract other pieces of code as well.
+For example design patterns \cite{gamma05} are defined as commonly used solutions to design issues. In C++ Boost library there is a \emph{boost::singleton} class template which encapsulates singleton design pattern. Other example might be software architecture elements, like ORM\footnote{ORM - Object Relational Mapping, ``programming technique for converting data between incompatible type systems in relational databases and object-oriented programming languages'' --- wikipedia} tools. One example of ORM is Hibernate\footnote{''Hibernate is an object-relational mapping (ORM) library for the Java language, providing a framework for mapping an object-oriented domain model to a traditional relational database`` --- wikipedia}. Hibernate extracts communication between application and data base.
+
+Encapsulating on the other hand deals with hiding design decisions in software to make it less vulnerable to changes. That protects other software parts from change when implementation of the ``box'' changes. 
+Most common type of encapsulation is \emph{field encapsulation} refactoring operation, but also well coded library have interface, which encapsulates their implementation.
+
+With good tools we can extract and encapsulate any programming ides: common methods, design patterns, design decisions etc.
+
+Thanks to extracting and encapsulating we don't need to repeat the same or similar code.
+
+\subsection{Don't repeat your self}
+Extracting and encapsulating is essence support for DRY philosophy. Don't Repeat Yourself was 
+introduced in Andy Hunt and Dave Thomas's book \emph{The Pragmatic Programmer}\cite{Hunt99}.
+DRY is aimed at reducing duplication is software development. Unfortunately it's hard to follow DRY in Java.
+For example if we want to encapsulate field we have to write getter and setters by hand or generate it automaticly.
+Both ways it produces large amounts of repeatable code. Other example is singleton class. As mentioned before C++ BOOST library encapsulates idea of singleton. It is impossible to do so in Java. 
+I'll show latter how it is made in other languages.
+
+Why is DRY so important?
+Using DRY means saving time of programmers. It is also making them more motivated, because programmers don't like to do this same kind of work again and again.
+More motivated developers works even faster.
+For IT companies it means, that they can build IT system faster and cheaper. They are also able to produce higher quality. 
+For their clients that means they spend less money and less time on IT projects. They can also introduce new products to the market faster. It's everybody win situation.
+
+
+\section{Requirements}
+Java programming language is one of the dominating languages on IT market. 
+As mentioned before, the problem with Java is that it does not allow to follow the DRY philosophy as good as other languages does.
+My aim is to introduce a prototype of a tool, which allow to play with DRY and Java.
+
+There are several requirements I believe are important for such a tool:
+\begin{itemize}
+ \item Lightweight - simple, fast and easy to use. Programmer should feel it makes his life easier, not more complicated. 
+ \item Intuitiveness - good Java programmer should easily get a feeling how to use it and what kind of problems can it solve.
+ \item Integration with Java language - it has to natural to use it with Java, it should be supset of Java, make use of it elements like packages, annotations or modifiers.
+ \item Allow to use DRY - most important it should allow to easily do encapsulation and extracting.
+\end{itemize}
+
+
+Solution I'll present follows all this requirements.
+Before going to explain it, I will present other similar solutions.
+
+
+
+\section{State of the art}
+\subsection{Nemerle}
+\subsection{Aspects}
+\subsection{Dynamic languages metaprogramming}
