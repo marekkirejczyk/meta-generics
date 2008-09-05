@@ -7,7 +7,7 @@ import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.member.Constructor;
 import metagenerics.ast.member.Method;
 import metagenerics.ast.metageneric.MetaTypedefAst;
-import metagenerics.transform.parse.PrettyPrinter;
+import metagenerics.pipe.common.PrettyPrinter;
 
 abstract public class MetaGeneric {
 
@@ -39,12 +39,12 @@ abstract public class MetaGeneric {
 		result.append("}\n");
 	}
 
-	protected void evaluate(String text, Object... args) {
+	public void evaluate(String text, Object... args) {
 		output.append(String.format(text, args));
 		output.append("\n");
 	}
 
-	protected void evaluate(Node node) {
+	public void evaluate(Node node) {
 		PrettyPrinter prettyPrinter = new PrettyPrinter();
 		prettyPrinter.setAppendable(output);
 
@@ -57,17 +57,17 @@ abstract public class MetaGeneric {
 		}
 	}
 
-	protected void evaluateWithName(Method method, String name) {
+	public void evaluateWithName(Method method, String name) {
 		Method clonedMethod = method.clone();
 		clonedMethod.setName(name);
 		evaluate(clonedMethod);
 	}
 
-	protected void setExtends(String name) {
+	public void setExtends(String name) {
 		this.extendsName = name;
 	}
 
-	protected void evaluateAll(Collection<? extends Node> nodes) {
+	public void evaluateAll(Collection<? extends Node> nodes) {
 		for (Node node : nodes)
 			evaluate(node);
 	}

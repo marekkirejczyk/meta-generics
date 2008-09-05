@@ -3,11 +3,11 @@ package metagenerics.cli;
 import java.io.IOException;
 import java.util.List;
 
-import metagenerics.walkers.MetaPreCompilerWalker;
+import metagenerics.pipe.MetaJavaPreCompiler;
 
 public class MetaPreCompiler extends CommandLineCompiler {
 
-	MetaPreCompilerWalker compiler = new MetaPreCompilerWalker();
+	MetaJavaPreCompiler compiler = new MetaJavaPreCompiler();
 
 	@Override
 	void printInfo() {

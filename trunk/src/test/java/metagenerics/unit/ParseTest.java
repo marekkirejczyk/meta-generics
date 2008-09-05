@@ -2,8 +2,8 @@ package metagenerics.unit;
 
 import static metagenerics.TestHelper.getUnitTestFileName;
 import metagenerics.ast.unit.UnitAst;
-import metagenerics.transform.parse.MetaJavaParser;
-import metagenerics.transform.parse.PrettyPrinter;
+import metagenerics.pipe.common.PrettyPrinter;
+import metagenerics.pipe.phase1.parse.MetaJavaParser;
 
 import org.junit.Assert;
 import org.junit.Test;

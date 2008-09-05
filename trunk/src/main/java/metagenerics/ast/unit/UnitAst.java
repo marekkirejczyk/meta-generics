@@ -14,6 +14,8 @@ import util.CollectionUtils;
 
 public class UnitAst extends Node {
 
+	
+	
 	PackageDeclaration packageDeclaration = new PackageDeclaration();
 
 	List<ImportAst> imports = new ArrayList<ImportAst>();
@@ -31,7 +33,7 @@ public class UnitAst extends Node {
 	protected UnitAst(UnitAst copy) {
 		super(copy);
 		packageDeclaration = copy.packageDeclaration;
-		imports = copy.imports;
+		imports.addAll(copy.imports);
 		elements = copy.elements.clone();
 		annotations = copy.annotations;
 		metaElements = copy.metaElements;

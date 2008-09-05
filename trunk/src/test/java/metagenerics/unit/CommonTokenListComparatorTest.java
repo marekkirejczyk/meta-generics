@@ -5,7 +5,7 @@ import static metagenerics.TestHelper.getUnitTestFileName;
 import java.io.IOException;
 import java.util.List;
 
-import metagenerics.transform.parse.MetaJavaLexer;
+import metagenerics.pipe.phase1.parse.MetaJavaLexer;
 
 import org.antlr.runtime.CommonToken;
 import org.junit.Assert;

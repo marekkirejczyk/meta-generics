@@ -13,8 +13,8 @@ import java.io.Reader;
 import java.util.Collections;
 
 import junit.framework.Assert;
-import metagenerics.walkers.MetaCompilerWalker;
-import metagenerics.walkers.MetaPreCompilerWalker;
+import metagenerics.pipe.MetaJavaCompiler;
+import metagenerics.pipe.MetaJavaPreCompiler;
 import util.FileByTokenComparator;
 import util.FileUtils;
 import util.FolderComparator;
@@ -50,7 +50,7 @@ public class MetaProgramUnderTest {
 	}
 
 	protected void runCompilerTest() throws IOException {
-		MetaCompilerWalker compiler = new MetaCompilerWalker();
+		MetaJavaCompiler compiler = new MetaJavaCompiler();
 		compiler.setSourceFolders(Collections.singletonList(sourceFolder));
 		compiler.setIntermediateFolder(intermediateFolder);
 		compiler.setTargetFolder(outputFolder);
@@ -77,8 +77,8 @@ public class MetaProgramUnderTest {
 		String expectedFolder = getIntegrationTestFileName(folder + "/out");
 		if (!new File(expectedFolder).isDirectory())
 			return;
-		cleanIntermediateFolder();
-		MetaPreCompilerWalker preCompiler = new MetaPreCompilerWalker();
+		cleanFolder(intermediateFolder);
+		MetaJavaPreCompiler preCompiler = new MetaJavaPreCompiler();
 		preCompiler.setSourceFolders(Collections.singletonList(sourceFolder));
 		preCompiler.setIntermediateFolder(intermediateFolder);
 		preCompiler.compile();
@@ -95,9 +95,9 @@ public class MetaProgramUnderTest {
 		}
 	}
 
-	private void cleanIntermediateFolder() throws NotAFileOrFolderException {
-		if (isFolder(intermediateFolder))
-			folderDelete(intermediateFolder);
+	private void cleanFolder(String folder) throws NotAFileOrFolderException {
+		if (isFolder(folder))
+			folderDelete(folder);
 	}
 
 	protected void setupFolders(String folder) {
@@ -109,9 +109,9 @@ public class MetaProgramUnderTest {
 
 	protected void runIntegrationTest(String folder) throws IOException {
 		setupFolders(folder);
-		cleanIntermediateFolder();
+		cleanFolder(intermediateFolder);
+		cleanFolder(outputFolder);
 		runCompilerTest();
-
 		runPreCompilerTest();
 	}
 
@@ -148,8 +148,8 @@ public class MetaProgramUnderTest {
 
 	public void runGuiTest(String folder) throws IOException {
 		setupFolders(folder);
-		cleanIntermediateFolder();
-		MetaCompilerWalker compiler = new MetaCompilerWalker();
+		cleanFolder(intermediateFolder);
+		MetaJavaCompiler compiler = new MetaJavaCompiler();
 		compiler.setSourceFolders(Collections.singletonList(sourceFolder));
 		compiler.setIntermediateFolder(intermediateFolder);
 		compiler.setTargetFolder(outputFolder);
@@ -161,16 +161,6 @@ public class MetaProgramUnderTest {
 
 		new Thread(new Copier(p.getInputStream(), System.out)).start();
 		new Thread(new Copier(p.getErrorStream(), System.err)).start();
-		/*
-		Reader r = new InputStreamReader(p.getInputStream());
 
-		char[] buffer = new char[1024];
-		int n;
-		do {
-			n = r.read(buffer);
-			for (int i = 0; i < n; i++)
-				System.out.print(buffer[i]);
-		} while (n > 0);
-	*/
 	}
 }

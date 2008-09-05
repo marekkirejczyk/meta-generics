@@ -39,10 +39,12 @@ abstract public class Symbol extends SymbolTable {
 	}
 
 	public String getCannonicalName() {
-		if (getName().equals(""))
+		if (this instanceof PackageSymbol && getName().equals(""))
 			return "";
-		else 
-			return getPackageSymbol().getCannonicalName() + getName();  
+		String result = ((Symbol)getParent()).getCannonicalName(); 
+		if (!result.equals(""))
+			result += ".";
+		return result + getName();  
 	}
 	
 	public Node getAstNode() {

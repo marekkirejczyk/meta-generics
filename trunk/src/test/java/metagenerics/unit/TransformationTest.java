@@ -5,25 +5,37 @@ import static metagenerics.TestHelper.getUnitTestFileName;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+import javax.tools.JavaCompiler.CompilationTask;
 
 import metagenerics.TestHelper;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.UnitAst;
+import metagenerics.pipe.common.CustomDirClassLoader;
+import metagenerics.pipe.phase1.parse.MetaJavaParser;
+import metagenerics.pipe.phase2.MetaGenericProxyLoader;
+import metagenerics.pipe.phase2.MetaGenericTransform;
+import metagenerics.pipe.phase3.TypedefTransform;
+import metagenerics.runtime.MetaGeneric;
 import metagenerics.symbol.PackageSymbol;
 import metagenerics.symbol.type.ClassSymbol;
 import metagenerics.symbol.type.MetaGenericSymbol;
 import metagenerics.symbol.type.MetaTypeDefSymbol;
-import metagenerics.transform.metageneric.MetaGenericCompiler;
-import metagenerics.transform.metageneric.MetaGenericTransform;
-import metagenerics.transform.metatypedef.TypedefTransform;
-import metagenerics.transform.parse.MetaJavaParser;
 
 import org.antlr.runtime.RecognitionException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import util.FileUtils;
 
 public class TransformationTest {
 
@@ -73,10 +85,10 @@ public class TransformationTest {
 		MetaGenericAst metaGenericAst = TestHelper.firstASTInFile(
 				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
 
-		MetaGenericCompiler compiler = new MetaGenericCompiler();
+		MetaGenericProxyLoader compiler = new MetaGenericProxyLoader();
 		compiler.setIntermediateFolder(INTERMEDIATE_FOLDER);
 
-		return compiler.compile(metaGenericAst);
+		return compileMetaGeneric(metaGenericAst);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,8 +104,12 @@ public class TransformationTest {
 				ClassDeclaration.class, STUB_IN_FILE_NAME);
 		MetaTypedefAst typedef = TestHelper.firstASTInFile(
 				MetaTypedefAst.class, META_TYPEDEF_IN_FILE_NAME);
-		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_INTERMEDIATE_FILE_NAME);
+		MetaGenericAst metaGenericAst = TestHelper.firstASTInFile(
+				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
 
+		MetaGenericSymbol symbol = new MetaGenericSymbol(metaGenericAst);
+		symbol.setParent(new PackageSymbol(""));
+		metagenerics.runtime.MetaGeneric generic = firstMetaGenericInFile(GENERIC_INTERMEDIATE_FILE_NAME);
 		generic.setArgument(1, stub);
 		generic.generateClass(typedef, result);
 
@@ -137,12 +153,37 @@ public class TransformationTest {
 	public void metaCompilator() throws IOException, ClassNotFoundException,
 			RecognitionException, InstantiationException,
 			IllegalAccessException {
-		MetaGenericCompiler compiler = new MetaGenericCompiler();
+
 		MetaGenericAst metaGeneric = TestHelper.firstASTInFile(
 				MetaGenericAst.class, GENERIC_IN_FILE_NAME);
-		compiler.setIntermediateFolder(INTERMEDIATE_FOLDER);
-		metagenerics.runtime.MetaGeneric genericClass = compiler
-				.compile(metaGeneric);
+		MetaGeneric genericClass = compileMetaGeneric(metaGeneric);
 		Assert.assertNotNull(genericClass);
+	}
+
+	protected MetaGeneric compileMetaGeneric(MetaGenericAst ast)
+			throws IOException, InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
+		StringBuilder result = new StringBuilder();
+		MetaGenericTransform mgt = new MetaGenericTransform();
+		mgt.transform(ast, result);
+
+		FileUtils.save(GENERIC_INTERMEDIATE_FILE_NAME, result.toString());
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+				null, null, null);
+
+		Iterable<? extends JavaFileObject> compilationUnits = fileManager
+				.getJavaFileObjectsFromFiles(Collections.singleton(new File(
+						GENERIC_INTERMEDIATE_FILE_NAME)));
+
+		CompilationTask task = compiler.getTask(null, fileManager, null, Arrays
+				.asList(new String[] { "-d", INTERMEDIATE_FOLDER }), null,
+				compilationUnits);
+		task.call();
+		CustomDirClassLoader loader = new CustomDirClassLoader(
+				INTERMEDIATE_FOLDER);
+		Class<? extends Object> genericClass = loader
+				.loadClass(INTERMEDIATE_CLASS_NAME);
+		return (MetaGeneric) genericClass.newInstance();
 	}
 }

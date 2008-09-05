@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import metagenerics.ast.unit.UnitAst;
-import metagenerics.transform.parse.MetaJavaLexer;
-import metagenerics.transform.parse.MetaJavaParser;
+import metagenerics.pipe.phase1.parse.MetaJavaLexer;
+import metagenerics.pipe.phase1.parse.MetaJavaParser;
 
 import org.antlr.runtime.CommonToken;
 import org.antlr.runtime.RecognitionException;
