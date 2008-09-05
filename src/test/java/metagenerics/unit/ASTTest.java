@@ -9,15 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import metagenerics.ast.unit.UnitAst;
+import metagenerics.io.FileTransform;
 import metagenerics.io.SourcesWalker;
-import metagenerics.transform.parse.MetaJavaLexer;
-import metagenerics.transform.parse.PrettyPrinter;
+import metagenerics.pipe.common.PrettyPrinter;
+import metagenerics.pipe.phase1.parse.MetaJavaLexer;
+import metagenerics.pipe.phase1.parse.MetaJavaParser;
 
 import org.antlr.runtime.CommonToken;
 import org.junit.Assert;
 import org.junit.Test;
-
-import trash.ParseTransformBase;
 
 public class ASTTest {
 
@@ -100,16 +100,19 @@ public class ASTTest {
 		compareTokenList(fromAST, fromFile);
 	}
 
-	ParseTransformBase byTokenComparator = new ParseTransformBase() {
+	FileTransform byTokenComparator = new FileTransform() {
 		@Override
-		public void compile(UnitAst unit, File fileName) {
+		public void compile(File inputFileName, File outputFileName) {
 			try {
-				
-				doCompile(unit, fileName);
-			} catch (IOException e) {
-				e.printStackTrace();
+				compile(new MetaJavaParser().parse(inputFileName),
+						outputFileName);
+			} catch (Exception e) {
 				Assert.fail();
 			}
+		}
+
+		public void compile(UnitAst unit, File fileName) throws IOException {
+			doCompile(unit, fileName);
 		}
 	};
 

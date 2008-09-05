@@ -3,7 +3,7 @@
  */
 package util;
 
-import static metagenerics.transform.parse.MetaJavaLexer.tokenizeFile;
+import static metagenerics.pipe.phase1.parse.MetaJavaLexer.tokenizeFile;
 
 import java.io.IOException;
 import java.util.Comparator;

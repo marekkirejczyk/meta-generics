@@ -69,4 +69,33 @@ public class StringUtils {
 		return result.toString();
 	}
 
+	static public String escapeQuotedNewLines(String arg) {
+		StringBuilder result = new StringBuilder();
+		int state = 0;
+		for (int i = 0; i < arg.length(); i++) {
+			char c = arg.charAt(i);
+			if (state == 0) {
+				if (c == '"')
+					state = 1;
+				result.append(c);
+			} else if (state == 1) {
+				if (c == '"') {
+					state = 0;
+					result.append(c);
+				} else if (c == '\n')
+					result.append("\\n");
+				else
+					result.append(c);
+			}
+
+		}
+		return result.toString();
+	}
+
+	static public String translateEvaluateLanguage(String arg) {
+		String result = escapeQuotedNewLines(arg);
+		for (int i = 0; i < 10; i++)
+			result = result.replace("{" + i + "}", "%" + i + "$s");
+		return result;
+	}
 }

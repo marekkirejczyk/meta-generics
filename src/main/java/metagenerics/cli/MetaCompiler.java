@@ -3,13 +3,13 @@ package metagenerics.cli;
 import java.io.IOException;
 import java.util.List;
 
-import metagenerics.walkers.MetaCompilerWalker;
+import metagenerics.pipe.MetaJavaCompiler;
 
 public class MetaCompiler extends CommandLineCompiler {
 
-	private MetaCompilerWalker compiler = new MetaCompilerWalker();
+	private MetaJavaCompiler compiler = new MetaJavaCompiler();
 
-	public MetaCompilerWalker getCompiler() {
+	public MetaJavaCompiler getCompiler() {
 		return compiler;
 	}
 

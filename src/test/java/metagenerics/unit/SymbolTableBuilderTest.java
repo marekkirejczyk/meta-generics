@@ -8,16 +8,15 @@ import java.util.Map;
 
 import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.UnitAst;
+import metagenerics.pipe.phase1.parse.ParseWalker;
+import metagenerics.pipe.phase1.symbol.SymbolTableBuilder;
+import metagenerics.pipe.phase3.TypedefBuilder;
 import metagenerics.symbol.PackageSymbol;
 import metagenerics.symbol.Symbol;
 import metagenerics.symbol.SymbolTable;
 import metagenerics.symbol.UnitSymbol;
 import metagenerics.symbol.type.ClassSymbol;
 import metagenerics.symbol.type.MetaTypeDefSymbol;
-import metagenerics.visitors.MetaGenericBuilder;
-import metagenerics.visitors.SymbolTableBuilder;
-import metagenerics.visitors.TypedefBuilder;
-import metagenerics.walkers.ParseWalker;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,7 +33,7 @@ public class SymbolTableBuilderTest {
 
 	SymbolTableBuilder symbolBuilder = new SymbolTableBuilder();
 
-	MetaGenericBuilder genericBuilder = new MetaGenericBuilder();
+	
 
 	ParseWalker parser = new ParseWalker();
 

@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import metagenerics.cli.MetaCompiler;
 import metagenerics.exception.MissingOptionException;
 import metagenerics.exception.UnknownOptionException;
-import metagenerics.walkers.MetaCompilerWalker;
+import metagenerics.pipe.MetaJavaCompiler;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class CommandLineArgumentsTest {
 
 	MetaCompiler compiler;
 
-	MetaCompilerWalker compilerWalker;
+	MetaJavaCompiler compilerWalker;
 
 	@Before
 	public void createLauncher() {

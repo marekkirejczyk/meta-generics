@@ -1,7 +1,7 @@
 package metagenerics.unit;
 
 import metagenerics.TestHelper;
-import metagenerics.walkers.SourceListWalker;
+import metagenerics.io.SourceListWalker;
 
 import org.junit.Assert;
 import org.junit.Test;
