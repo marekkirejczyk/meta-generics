@@ -36,12 +36,12 @@ public class JarToolsTest {
 		String name = entry.getName().replace(File.separator, ".");
 
 		name = name.substring(0, name.length() - 6);
-		//System.out.println(" start: " + name);
-		Class <? extends Object> klass = loader.loadClass(name);
+		// System.out.println(" start: " + name);
+		Class<? extends Object> klass = loader.loadClass(name);
 		System.out.println(klass.getName());
-		for (Method m: klass.getMethods()) {
+		for (Method m : klass.getMethods()) {
 			System.out.print(" " + m.getName() + "(");
-			for (Class <? extends Object> p: m.getParameterTypes())
+			for (Class<? extends Object> p : m.getParameterTypes())
 				System.out.print(p.getName() + " ");
 			System.out.println(")");
 		}
