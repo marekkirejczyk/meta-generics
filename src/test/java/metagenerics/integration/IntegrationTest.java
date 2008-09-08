@@ -23,6 +23,13 @@ public class IntegrationTest {
 	}
 
 	@Test
+	public void accessorsJar() throws IOException {	
+		metaProgramUnderTest.runJarMaking("accessors_jar");
+		runIntegrationTest("accessors_jar");
+	}
+
+	
+	@Test
 	public void listeners() throws IOException {
 		runIntegrationTest("listener");
 	}

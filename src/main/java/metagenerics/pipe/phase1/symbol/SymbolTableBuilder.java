@@ -3,6 +3,7 @@ package metagenerics.pipe.phase1.symbol;
 import java.util.Collection;
 
 import metagenerics.ast.unit.UnitAst;
+import metagenerics.pipe.common.ClassPath;
 import metagenerics.symbol.PackageSymbol;
 
 public class SymbolTableBuilder {
@@ -21,5 +22,9 @@ public class SymbolTableBuilder {
 			phase2.visit(unitAst);
 
 		return phase2.getRootPackage();
+	}
+
+	public void setClassPath(ClassPath classPath) {
+		phase1.getRootPackage().setClassPath(classPath);
 	}
 }

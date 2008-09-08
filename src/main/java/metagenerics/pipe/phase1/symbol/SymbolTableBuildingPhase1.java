@@ -2,26 +2,18 @@ package metagenerics.pipe.phase1.symbol;
 
 import java.util.List;
 
-import metagenerics.ast.Visitor;
-import metagenerics.ast.common.Modifiers;
+import metagenerics.ast.VisitorBase;
 import metagenerics.ast.common.Semicolon;
 import metagenerics.ast.declarations.AnnotationDeclaration;
 import metagenerics.ast.declarations.ClassDeclaration;
 import metagenerics.ast.declarations.Element;
 import metagenerics.ast.declarations.EnumDeclaration;
 import metagenerics.ast.declarations.Interface;
-import metagenerics.ast.member.Block;
-import metagenerics.ast.member.Constructor;
-import metagenerics.ast.member.Field;
-import metagenerics.ast.member.MemberMock;
-import metagenerics.ast.member.Method;
-import metagenerics.ast.member.VariableBuilder;
 import metagenerics.ast.metageneric.MetaGenericAst;
 import metagenerics.ast.metageneric.MetaTypedefAst;
 import metagenerics.ast.unit.ImportAst;
 import metagenerics.ast.unit.PackageDeclaration;
 import metagenerics.ast.unit.UnitAst;
-import metagenerics.exception.NotImplementedException;
 import metagenerics.symbol.PackageSymbol;
 import metagenerics.symbol.Symbol;
 import metagenerics.symbol.UnitSymbol;
@@ -32,7 +24,7 @@ import metagenerics.symbol.type.InterfaceSymbol;
 import metagenerics.symbol.type.MetaGenericSymbol;
 import metagenerics.symbol.type.MetaTypeDefSymbol;
 
-public class SymbolTableBuildingPhase1 implements Visitor {
+public class SymbolTableBuildingPhase1 extends VisitorBase {
 
 	private PackageSymbol rootPackage = new PackageSymbol("");
 
@@ -120,38 +112,10 @@ public class SymbolTableBuildingPhase1 implements Visitor {
 		symbol.setParent(parentSymbol);
 	}
 
-	public void visit(VariableBuilder vb) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(Method method) {
-		throw new NotImplementedException();		
-	}
-
-	public void visit(Constructor constructor) {
-		throw new NotImplementedException();		
-	}
-
-	
-	public void visit(Field field) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(Block block) {
-		throw new NotImplementedException();
-	}
-
-	public void visit(MemberMock mock) {
-		throw new NotImplementedException();
-	}
-
 	public void visit(Semicolon mock) {
 
 	}
 
-	public void visit(Modifiers modifiers) {
-		
-	}
 
 
 

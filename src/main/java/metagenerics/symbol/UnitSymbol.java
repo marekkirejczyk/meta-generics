@@ -3,7 +3,6 @@ package metagenerics.symbol;
 import java.util.ArrayList;
 import java.util.List;
 
-import metagenerics.ast.Node;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.AmbiguousSymbolException;
 import metagenerics.symbol.type.Type;

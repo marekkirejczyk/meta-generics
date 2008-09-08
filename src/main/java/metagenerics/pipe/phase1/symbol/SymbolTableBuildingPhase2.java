@@ -57,8 +57,11 @@ public class SymbolTableBuildingPhase2 implements Visitor {
 	public void visit(ImportAst importAst) {
 
 		Symbol symbol = rootPackage.localLookup(importAst.getPath());
+		if (symbol == null)
+			symbol = rootPackage.jarLookup(importAst.getPath());
 		if (symbol == null) {
 			System.err.println("Import not resolved: " + importAst.getPath());
+
 			return;
 		} else if (importAst.isStatic()) {
 			if (importAst.isGeneral() && symbol instanceof Type) {

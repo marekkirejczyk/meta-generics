@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import metagenerics.exception.CompileException;
 import metagenerics.exception.UnknownSymbolException;
 import util.CollectionUtils;
 
@@ -58,6 +59,14 @@ abstract public class SymbolTable {
 		return localLookup(path);
 	}
 
+	public Symbol jarLookup(String name) {
+		try {
+			return ((PackageSymbol) this).getClassPath().lookup(name);
+		} catch (ClassNotFoundException e) {
+			throw new CompileException();
+		}
+	}
+
 	public Symbol lookup(String name) {
 		Symbol thisSymbol = (Symbol) this;
 
@@ -73,10 +82,15 @@ abstract public class SymbolTable {
 
 		/* global lookup */
 		symbol = thisSymbol.getRootSymbol().localLookup(name);
-		if (symbol == null)
-			throw new UnknownSymbolException(name);
-		return symbol;
+		if (symbol != null)
+			return symbol;
 
+		/* jar lookup */
+		symbol = thisSymbol.getRootSymbol().jarLookup(name);
+		if (symbol != null)
+			return symbol;
+
+		throw new UnknownSymbolException(name);
 	}
 
 	public void dump(PrintStream ps) {

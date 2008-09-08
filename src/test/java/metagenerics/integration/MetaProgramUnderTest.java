@@ -82,7 +82,7 @@ public class MetaProgramUnderTest {
 		preCompiler.setSourceFolders(Collections.singletonList(sourceFolder));
 		preCompiler.setIntermediateFolder(intermediateFolder);
 		preCompiler.compile();
-
+		preCompiler.getClassPath().addFolder("");
 		FolderComparator comparator = new FolderComparator();
 
 		FileByTokenComparator fileComparator = new FileByTokenComparator();
@@ -162,5 +162,23 @@ public class MetaProgramUnderTest {
 		new Thread(new Copier(p.getInputStream(), System.out)).start();
 		new Thread(new Copier(p.getErrorStream(), System.err)).start();
 
+	}
+
+	public void runJarMaking(String folder) throws IOException {
+		sourceFolder = getIntegrationTestFileName(folder + "/lib-src");
+		intermediateFolder = getIntegrationTestFileName(folder
+				+ "/lib-int");
+		outputFolder = getIntegrationTestFileName(folder + "/lib-bin");
+		cleanFolder(outputFolder);
+		cleanFolder(intermediateFolder);
+		
+		String libFolder = getIntegrationTestFileName(folder + "/lib"); 
+		cleanFolder(libFolder);
+		runCompilerTest();
+		new File(libFolder).mkdir();
+		String jarPath = getIntegrationTestFileName(folder
+				+ "/lib/addaccessors.jar");
+		String cmd = "jar -cf " + jarPath + " -C " + outputFolder + " .";
+		Runtime.getRuntime().exec(cmd);
 	}
 }
