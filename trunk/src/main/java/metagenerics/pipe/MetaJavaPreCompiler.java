@@ -15,6 +15,7 @@ import metagenerics.ast.UnitAsts;
 import metagenerics.ast.unit.UnitAst;
 import metagenerics.exception.CompileException;
 import metagenerics.pipe.common.AstForestSaver;
+import metagenerics.pipe.common.ClassPath;
 import metagenerics.pipe.common.JavaCompilerWalker;
 import metagenerics.pipe.phase1.ImportsWalker;
 import metagenerics.pipe.phase1.PackageDeclarationsChecker;
@@ -34,8 +35,16 @@ public class MetaJavaPreCompiler {
 
 	UnitAsts units;
 
+	ClassPath classPath = new ClassPath();
+
+	public ClassPath getClassPath() {
+		return classPath;
+	}
+
 	public void buildSymbolTables() {
-		new SymbolTableBuilder().build(units.values());
+		SymbolTableBuilder builder = new SymbolTableBuilder();
+		builder.setClassPath(classPath);
+		builder.build(units.values());
 	}
 
 	public void setMetaGenericsIntermediateFolder(

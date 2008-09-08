@@ -3,10 +3,22 @@ package metagenerics.symbol;
 import java.util.ArrayList;
 import java.util.List;
 
+import metagenerics.pipe.common.ClassPath;
+
 import util.CollectionUtils;
 
 public class PackageSymbol extends Symbol {
 	private List<UnitSymbol> units = new ArrayList<UnitSymbol>();
+
+	ClassPath classPath;
+	
+	public ClassPath getClassPath() {
+		return classPath;
+	}
+
+	public void setClassPath(ClassPath classPath) {
+		this.classPath = classPath;
+	}
 
 	private PackageSymbol getPackage(String name) {
 		PackageSymbol packageSymbol = (PackageSymbol) getSymbol(name);

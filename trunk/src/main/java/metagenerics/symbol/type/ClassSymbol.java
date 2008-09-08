@@ -10,6 +10,10 @@ public class ClassSymbol extends Type {
 		setAstNode(astNode);
 	}
 
+	public ClassSymbol(Class klass) {
+		setName(klass.getSimpleName());
+	}
+	
 	@Override
 	public ClassDeclaration getAstNode() {
 		return (ClassDeclaration) super.getAstNode();
